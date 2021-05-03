@@ -1,0 +1,71 @@
+sh ru | ex !
+
+
+      Авто ip
+en
+conf t
+interface GigabitEthernet0/0
+ip address 192.168.10.1 255.255.255.0
+no shutdown
+interface GigabitEthernet0/1
+ip address 192.168.20.1 255.255.255.0
+no shutdown
+ip dhcp pool POOL_1.0
+default-router 192.168.10.0
+network 192.168.10.0 255.255.255.0
+ip dhcp pool POOL_2.0
+default-router 192.168.20.0
+network 192.168.20.0 255.255.255.0
+exit
+end
+wr 
+
+en
+conf t
+interface GigabitEthernet0/1
+ip address 192.168.20.1 255.255.255.0
+no shutdown
+ip dhcp pool POOL_2.0
+
+network 192.168.20.0 255.255.255.0
+exit
+end
+wr 
+
+
+
+
+
+   Динамическая маршрутизация RIP
+en
+conf t
+router rip
+version 2
+passive-interface g0/0
+network 10.0.0.0
+network 192.168.1.0
+no auto-summary
+end
+wr 
+
+
+
+    Динамическая маршрутизация OSPF
+en
+conf t
+router ospf 1
+passive-interface default
+no passive-interface g0/1
+network 192.168.1.0 0.0.0.255 area 0
+network 10.0.0.0 0.0.0.3 area 0
+end
+wr
+
+ таблицу маршрутизации
+sh ip route
+
+
+  Сброс конфигураций роутера
+  
+  do erase startup-config
+  do reload

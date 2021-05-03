@@ -1,0 +1,51 @@
+Урок 5 методичка
+
+
+Правый роутер
+
+ena
+conf t
+int g0/0
+ip addr 80.80.80.70 255.255.255.0
+no shut
+int g0/1/0
+ip addr 70.70.70.80 255.255.255.0
+no shut
+
+
+route rip
+version 2
+network 80.80.80.0
+network 70.70.70.0
+end
+
+
+
+Левый роутер
+
+ena
+conf t
+int g0/0
+ip addr 192.168.1.1 255.255.255.0
+no shut
+int g0/1/0
+ip addr 70.70.70.70 255.255.255.0
+no shut
+route rip
+version 2
+network 70.70.70.0
+exit
+
+
+
+conf t
+access-list 1 permit 192.168.1.0 0.0.0.255
+ip nat inside source list 1 int g0/1/0 overload
+int g0/0
+ip nat inside
+int g0/1/0
+ip nat outside
+exit
+
+
+

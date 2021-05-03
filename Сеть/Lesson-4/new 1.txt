@@ -1,0 +1,136 @@
+Home work 4
+
+router right
+
+en
+conf t
+interface GigabitEthernet6/0
+ip address 172.16.0.193 255.255.255.192
+no shutdown
+exit
+ip dhcp pool POOL_1.0
+default-router 172.16.0.193
+network 172.16.0.192 255.255.255.192
+exit
+end
+wr 
+
+
+
+
+
+
+
+
+___________________________________________________________________
+
+router up
+
+en
+conf t
+interface GigabitEthernet6/0
+ip address 172.16.0.1 255.255.255.192
+no shutdown
+exit
+ip dhcp pool POOL_2.0
+default-router 172.16.0.1
+network 172.16.0.0 255.255.255.192
+exit
+end
+wr 
+
+________________________________________________________________
+
+router left
+
+en
+conf t
+interface GigabitEthernet6/0
+ip address 172.16.0.65 255.255.255.192
+no shutdown
+exit
+ip dhcp pool POOL_3.0
+default-router 172.16.0.65
+network 172.16.0.64 255.255.255.192
+exit
+end
+wr 
+
+
+___________________________________________________________________
+
+
+router bottom
+
+en
+conf t
+interface GigabitEthernet6/0
+ip address 172.16.0.129 255.255.255.192
+no shutdown
+exit
+ip dhcp pool POOL_4.0
+default-router 172.16.0.129
+network 172.16.0.128 255.255.255.192
+exit
+end
+wr 
+
+
+
+
+
+
+
+right
+
+en
+conf t
+interface f9/0
+ip address 10.0.0.5 255.255.255.252
+no shutdown
+exit
+router ospf 1
+passive-interface default
+no passive-interface f9/0
+network 192.168.0.192 0.0.0.63 area 0
+network 10.0.0.4 0.0.0.3 area 0
+end
+wr
+
+
+
+left
+
+en
+conf t
+interface f9/0
+ip address 10.0.0.21 255.255.255.252
+no shutdown
+exit
+router ospf 1
+passive-interface default
+no passive-interface f9/0
+network 192.168.0.64 0.0.0.63 area 0
+network 10.0.0.20 0.0.0.3 area 0
+end
+wr
+
+centr
+
+en
+conf t
+interface f6/0
+ip address 10.0.0.6 255.255.255.252
+exit
+interface f8/0
+ip address 10.0.0.22 255.255.255.252
+no shutdown
+exit
+router ospf 1
+passive-interface default
+no passive-interface f6/0
+no passive-interface f8/0
+network 10.0.0.4 0.0.0.3 area 0
+network 10.0.0.20 0.0.0.3 area 0
+end
+wr

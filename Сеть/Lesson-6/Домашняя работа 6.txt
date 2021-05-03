@@ -1,0 +1,108 @@
+Домашняя работа 6
+
+Нижний роутер NAT и OSPF <<<<<<<<<<<<<<<<<<<<<<<<
+
+en
+conf t
+int g0/0
+ip add 192.168.0.1 255.255.255.0
+no sh
+int g0/0/0
+ip add 95.67.84.253 255.255.255.252
+no sh
+int g0/1/0
+ip add 17.0.8.61 255.255.255.252
+no sh
+exit
+router ospf 1
+passive-interface default
+no passive-interface g0/0/0
+no passive-interface g0/1/0
+network 95.67.84.252 0.0.0.3 area 0
+network 17.0.8.60 0.0.0.3 area 0
+end
+wr
+
+en
+conf t
+int g0/0/0
+ip nat outside
+exit
+int g0/1/0
+ip nat outside
+exit
+int g0/0
+ip nat inside
+exit
+ip nat inside source list 1 interface GigabitEthernet0/0/0 overload
+ip nat inside source list 2 interface GigabitEthernet0/1/0 overload
+access-list 1 permit 192.168.0.0 0.0.0.255
+access-list 2 permit 192.168.0.0 0.0.0.255
+end
+wr
+
+
+Правый роутер OSPF и IP int <<<<<<<<<<<<<<<<<<<<<<<<<
+
+en
+conf t
+int g0/0
+ip add 176.32.98.129 255.255.255.192
+no sh
+int g0/0/0
+ip add 187.50.48.194 255.255.255.252
+no sh
+int g0/1/0
+ip add 17.0.8.62 255.255.255.252
+no sh
+exit
+router ospf 1
+passive-interface default
+no passive-interface g0/0/0
+no passive-interface g0/1/0
+network 176.32.98.128 0.0.0.63 area 0
+network 187.50.48.192 0.0.0.3 area 0
+network 17.0.8.60 0.0.0.3 area 0
+end
+wr
+
+Левый роутер OSPF и IP int <<<<<<<<<<<<<<<<<<<<<<<<<
+
+en
+conf t
+int g0/0
+ip add 72.163.4.129 255.255.255.192
+no sh
+int g0/1/0
+ip add 187.50.48.193 255.255.255.252
+no sh
+int g0/0/0
+ip add 95.67.84.254 255.255.255.252
+no sh
+exit
+router ospf 1
+passive-interface default
+no passive-interface g0/0/0
+no passive-interface g0/1/0
+network 72.163.4.128 0.0.0.63 area 0
+network 187.50.48.192 0.0.0.3 area 0
+network 95.67.84.252 0.0.0.3 area 0
+end
+wr
+
+
+
+<<<<<<NDS
+
+176.32.98.166 amazon.com
+72.163.4.185 cisco.com
+
+ping 176.32.98.166
+ping 72.163.4.185
+ping amazon.com
+ping cisco.com
+
+ping test
+
+
+192.168.0.1

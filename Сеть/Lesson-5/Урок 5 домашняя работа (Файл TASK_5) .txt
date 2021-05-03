@@ -1,0 +1,115 @@
+Урок 5 домашняя работа 
+
+настройка DHCP router_main NAT <<<<<<<<<<<<<
+
+en
+conf t
+int g0/0
+ip add 192.168.10.1 255.255.255.0
+no sh
+int g0/1
+ip add 192.168.20.1 255.255.255.0
+no sh
+exit
+ip dhcp pool POOL_0
+default-router 192.168.10.1
+network 192.168.10.0 255.255.255.0
+exit
+ip dhcp pool POOL_1
+default-router 192.168.20.1
+network 192.168.20.0 255.255.255.0
+exit
+ip dhcp excluded-address 192.168.10.1
+ip dhcp excluded-address 192.168.20.1
+do wr
+
+настройка ospf and ip int router_main NAT <<<<<<<<<<<<<<<<<<<<<<<<<
+
+en
+conf t
+int g0/1/0
+ip add 77.77.77.2 255.255.255.252
+no sh
+exit
+int g0/0/0
+ip add 77.77.77.6 255.255.255.252
+no sh
+exit
+router ospf 1
+passive-interface default
+no passive-interface g0/0/0
+no passive-interface g0/1/0
+network 77.77.77.0 0.0.0.7 area 0
+end
+wr
+
+НАСТРОЙКА NAT route_main <<<<<<<<<<<<<
+
+en
+conf t
+int g0/0/0
+ip nat outside
+exit
+int g0/1/0
+ip nat outside
+exit
+int g0/0
+ip nat inside
+exit
+int g0/1
+ip nat inside
+exit
+
+ip nat inside source list 1 interface GigabitEthernet0/0/0 overload
+ip nat inside source list 2 interface GigabitEthernet0/1/0 overload
+
+access-list 1 permit 192.168.10.0 0.0.0.255
+access-list 1 permit 192.168.20.0 0.0.0.255
+access-list 2 permit 192.168.10.0 0.0.0.255
+access-list 2 permit 192.168.20.0 0.0.0.255
+end
+wr
+
+
+
+router_1   (ospf and ip int) <<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+en
+conf t
+int g0/0/0
+ip add 77.77.77.5 255.255.255.252
+no sh
+exit
+int g0/0
+ip add 172.16.0.5 255.255.255.252
+no sh
+exit
+router ospf 1
+passive-interface default
+no passive-interface g0/0/0
+network 172.16.0.4 0.0.0.3 area 0
+network 77.77.77.4 0.0.0.3 area 0
+end
+wr
+
+
+router_0   (ospf and ip int) <<<<<<<<<<<<<<<<<<<<<<<<<
+
+en
+conf t
+int g0/1/0
+ip add 77.77.77.1 255.255.255.252
+no sh
+exit
+int g0/0
+ip add 172.16.0.1 255.255.255.252
+no sh
+exit
+router ospf 1
+passive-interface default
+no passive-interface g0/1/0
+network 172.16.0.0 0.0.0.3 area 0
+network 77.77.77.0 0.0.0.3 area 0
+end
+wr

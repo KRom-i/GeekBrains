@@ -1,0 +1,57 @@
+right
+
+en
+conf t
+interface g0/0
+ip address 10.0.1.1 255.255.255.252
+no shutdown
+exit
+router ospf 1
+passive-interface default
+no passive-interface g0/0
+network 192.168.0.192 0.0.0.63 area 0
+network 10.0.1.0 0.0.0.3 area 0
+end
+wr
+
+
+
+left
+
+en
+conf t
+interface g1/0
+ip address 10.0.1.2 255.255.255.252
+no shutdown
+exit
+router ospf 1
+passive-interface default
+no passive-interface g1/0
+network 192.168.0.64 0.0.0.63 area 0
+network 10.0.1.0 0.0.0.3 area 0
+end
+wr
+
+centr
+
+en
+conf t
+interface f6/0
+ip address 10.0.1.2 255.255.255.252
+no shutdown
+exit
+interface f8/0
+ip address 10.0.2.2 255.255.255.252
+no shutdown
+exit
+
+en
+conf t
+router ospf 1
+passive-interface default
+no passive-interface f6/0
+no passive-interface f8/0
+network 10.0.1.0 0.0.0.3 area 0
+network 10.0.2.0 0.0.0.3 area 0
+end
+wr

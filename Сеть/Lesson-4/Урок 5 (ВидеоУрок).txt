@@ -1,0 +1,79 @@
+Урок 5 (ВидеоУрок)
+
+sh ru | ex ! (Просмотр конфогураций)
+
+
+
+server ip 11.0.0.2 255.255.255.252 (gw 11.0.0.1) <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+router3   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+IP interface config and OSPF config  <<<<<<<
+
+en
+conf t
+int g0/1
+ip add 11.0.0.1 255.255.255.252
+no sh
+int g0/0
+ip add 77.77.77.1 255.255.255.252
+no sh
+exit
+router ospf 1
+passive-interface default
+no passive-interface g0/0
+network 11.0.0.0 0.0.0.3 area 0
+network 77.77.77.0 0.0.0.3 area 0
+end
+wr
+
+
+
+router2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+IP interface config and DHCP config <<<<<<<
+
+en
+conf t
+int g0/0
+ip add 77.77.77.2 255.255.255.252
+no sh
+int g0/1
+ip add 192.168.0.1 255.255.255.0
+no sh
+exit
+ip dhcp pool POOL_0
+default-router 192.168.0.1
+network 192.168.0.0 255.255.255.0
+exit
+ip dhcp excluded-address 192.168.0.1
+do wr
+
+
+config OSPF only interface outside ! ! ! ! ! !  <<<<<<<
+ 
+en
+conf t
+router ospf 1
+passive-interface default
+no passive-interface g0/0
+network 77.77.77.0 0.0.0.3 area 0
+do wr
+
+
+config NAT  <<<<<<<
+
+access-list 1 permit 192.168.0.0 0.0.0.255
+int g0/0 
+ip nat outside
+exit
+int g0/1
+ip nat inside
+exit
+ip nat inside source list 1 int g0/0 o
+
+
+
+
