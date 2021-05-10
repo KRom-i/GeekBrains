@@ -1,0 +1,9 @@
+CREATE TABLE client_list (
+    id         INT,
+    FirstName  TEXT,
+    LastName   TEXT,
+    PatName    TEXT,
+    Telephone  TEXT,
+    DataBirth  TEXT,
+    InfoClient TEXT
+);

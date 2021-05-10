@@ -1,6 +1,6 @@
 package lesson_03.io;
 
-import com.mysql.cj.util.StringUtils;
+//import com.mysql.cj.util.StringUtils;
 
 import java.io.*;
 
@@ -65,7 +65,7 @@ public class ChallengClass {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             int bytesRead;
             while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                sb.append(StringUtils.toString(buffer));
+//                sb.append(StringUtils.toString(buffer));
             }
 
         } catch (Exception e) {
