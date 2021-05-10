@@ -1,51 +1,39 @@
 package GUIMain;
 
-import Authorization.AuthorizationInit;
-import WorkDataBase.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
 import java.awt.*;
-
+import java.io.IOException;
+import Logger.LOG;
 public class GUIMainStage extends Application {
 
-    public static UserSpartak activeUser;
-
     @Override
-    public void start(Stage primaryStage) throws Exception{
-
-        Parent root = FXMLLoader.load(getClass().getResource("GUIMain.fxml"));
-
+    public void start(Stage primaryStage){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("GUIMain.fxml"));
         Scene scene = new Scene(root);
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        double width = screenSize.getWidth();
-        double height = screenSize.getHeight();
-
-        primaryStage.setHeight(height - (height / 3));
-        primaryStage.setWidth(width - (width / 3));
-        primaryStage.setY(height / 6);
-        primaryStage.setX(width / 6);
-
-        primaryStage.initStyle(StageStyle.UNDECORATED);
+//        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//        double width = screenSize.getWidth();
+//        double height = screenSize.getHeight();
+//        primaryStage.setY(height / 6);
+//        primaryStage.setX(width / 6);
+//        primaryStage.initStyle(StageStyle.UNDECORATED);
 //        String css = this.getClass().getResource("/styles/style.css").toExternalForm();
 //        scene.getStylesheets().add(css);
-        scene.setFill(Color.TRANSPARENT);
+//        scene.setFill(Color.TRANSPARENT);
+//        primaryStage.setWidth(width - (width / 3));
+//        primaryStage.setHeight(height - (height / 3));
+        primaryStage.setHeight (740);
+        primaryStage.setWidth (1024);
         primaryStage.setScene(scene);
         primaryStage.show();
-
-        if ((activeUser = AuthUserDateBase.checkUserAuthStart()) == null){
-            primaryStage.setOpacity(0.5);
-            new AuthorizationInit(primaryStage, activeUser);
-        } else {
-
+        } catch (IOException e) {
+            LOG.error ("Ошибка при запуске приложения.", e);
         }
-
+        LOG.info ("Успешный старт приложения.");
     }
 
 
@@ -53,5 +41,8 @@ public class GUIMainStage extends Application {
             launch(args);
     }
 
-
+    @Override
+    public void stop(){
+        LOG.info ("Приложение закрыто без ошибок.");
+    }
 }

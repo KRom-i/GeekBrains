@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ClientClass {
 
+
     private int id;
     private String firstName = "";
     private String lastName = "";
@@ -101,27 +102,21 @@ public class ClientClass {
         this.subscription.add(subscription);
     }
 
+    @Override
+    public String toString (){
 
-    public String toString() {
-        return  lastName  + " " + firstName  + " " + patronymicName;
-//                ", telephone='" + telephone + '\'' +
-//                ", dateBirth='" + dateBirth + '\'' +
-//                ", dateBirth='" + Email + '\'' +
-//                ", infoClient='" + infoClient + '\'' +
-//                ", subscription=" + subscription +
-//                ", NAME_Class_DB='" + NAME_Class_DB + '\'' +
-//                '}';
-    }
+        return "ClientClass{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", patronymicName='" + patronymicName + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", dateBirth='" + dateBirth + '\'' +
+                ", Email='" + Email + '\'' +
+                ", infoClient='" + infoClient + '\'' +
+                ", subscription=" + subscription +
+                ", NAME_Class_DB='" + NAME_Class_DB + '\'' +
+                '}';
 
-    public String[] stringsClient(){
-
-//        String[] strings = {lastName, firstName,
-//                patronymicName, telephone,
-//                dateBirth, Email};
-
-//        String[] strings = {lastName, firstName,
-//                patronymicName};
-        String[] strings = this.toString().split(" ");
-        return strings;
     }
 }

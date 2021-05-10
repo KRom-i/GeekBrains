@@ -5,62 +5,56 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.Label?>
 <VBox fx:id="vBOX" maxHeight="Infinity" maxWidth="Infinity" spacing="5" styleClass="my-Box-class" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUIMain.GUIMainController">
 
-    <HBox fx:id="labelCoordinateWin" alignment="CENTER_RIGHT" maxWidth="Infinity" onMouseClicked="#methodCoordinateWin_2" onMouseDragged="#methodCoordinateWin_3" onMousePressed="#methodCoordinateWin" spacing="1" styleClass="my-Box1-class">
-        <Button fx:id="btncloseActiveUser" alignment="CENTER" minWidth="300" onAction="#closeActiveUser" onMouseEntered="#infiActiveUser" text="Закрыть сессию" />
-
-        <Button fx:id="btnwinVisible" onAction="#winVisible" text="С" />
-        <Button fx:id="btnwinSize" onAction="#winSize" text="Б" />
-        <Button fx:id="btncloseMain" onAction="#closeMain" styleClass="btn-close" text="З" />
-    </HBox>
-   <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+   <TabPane VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE" >
      <tabs>
-       <Tab text="Untitled Tab 1">
-
-       </Tab>
-       <Tab text="Untitled Tab 2">
+       <Tab text="Работа с клиентом">
          <content>
-           <VBox minHeight="0.0" minWidth="0.0" VBox.vgrow="ALWAYS">
-               <HBox fx:id="hBoxFildClient" alignment="CENTER" spacing="5">
-                   <TextField fx:id="textFieldFind" focusTraversable="false" maxWidth="500" minHeight="60" minWidth="500" onKeyTyped="#methodFindClientKey" promptText="Ввод" />
-               </HBox>
-               <HBox fx:id="hBoxFildClient2" alignment="CENTER" spacing="5">
-                   <Button minHeight="60" minWidth="245" styleClass="button-find-class" text="Гость" />
-                   <Button minHeight="60" minWidth="245" onMouseClicked="#editNewClient" styleClass="button-find-class" text="Новый клиент" />
-               </HBox>
+             <TabPane VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE" >
+                 <tabs>
+                     <Tab text="Поиск клиента">
+                         <content>
+                         <VBox minHeight="0.0" minWidth="0.0" VBox.vgrow="ALWAYS">
+                         <HBox fx:id="hBoxFindClient" alignment="CENTER" spacing="5">
+                             <TextField fx:id="textFieldFind" onKeyPressed="#methodFindClientDataBase" onAction="#methodFindClientDataBase"  focusTraversable="false" maxWidth="500" minHeight="60" minWidth="500" promptText="Ввод" />
+                         </HBox>
+                         <HBox fx:id="hBoxFindClient2" alignment="CENTER" spacing="5">
+                             <Button minHeight="60" minWidth="245" styleClass="button-find-class" text="Гость" />
+                         </HBox>
+                         </VBox>
+                         </content>
+                     </Tab>
+                     <Tab text="Добавить нового клиента" >
+                         <content>
+                             <VBox fx:id="vBOXEditClient" alignment="TOP_CENTER" spacing="5" styleClass="my-Box1-class" VBox.vgrow="ALWAYS" >
+                                 <TextField fx:id="textFirtsName" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Фамилия" />
+                                 <TextField fx:id="textLastName" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Имя" />
+                                 <TextField fx:id="textPatronymicName" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Отчество" />
+                                 <TextField fx:id="textTelephone" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Номер телефона" />
+                                 <TextField fx:id="textDateBirth" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Дата роджения" />
+                                 <TextField fx:id="textEmail" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Email" />
+                                 <TextArea fx:id="textInfoClient" focusTraversable="false" maxHeight="200" maxWidth="500" minHeight="200" minWidth="500" promptText="Информация о клиента" />
+                                 <HBox maxWidth="500" minHeight="40" minWidth="500" alignment="CENTER_RIGHT">
+                                     <Label fx:id="labelSaveEdit" maxWidth="400" minHeight="40" minWidth="400"/>
+                                     <Button fx:id="btnSaveEdit" focusTraversable="false" maxWidth="100" minHeight="40" minWidth="100" onAction="#methodSaveEditClient" text="Сохранить" />
+                                 </HBox>
+                             </VBox>
+                         </content>
+                     </Tab>
+                 </tabs>
+             </TabPane>
 
-               <VBox fx:id="vBOXEditClient" alignment="CENTER_LEFT" managed="false" opacity="0" spacing="5" styleClass="my-Box1-class" visible="false" VBox.vgrow="ALWAYS">
-                       <Button minHeight="40" minWidth="50" onAction="#downEditClientMenu" styleClass="btn-close" text="Назад" />
-
-                       <TextField fx:id="textFirtsName" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Фамилия" />
-
-                       <TextField fx:id="textLastName" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Имя" />
-
-                       <TextField fx:id="textPatronymicName" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Отчество" />
-
-                       <TextField fx:id="textTelephone" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Номер телефона" />
-
-                       <TextField fx:id="textDateBirth" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Дата роджения" />
-
-                       <TextField fx:id="textEmail" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Email" />
-
-                       <TextArea fx:id="textInfoClient" focusTraversable="false" maxHeight="200" maxWidth="500" minHeight="200" minWidth="500" promptText="Информация о клиента" />
 
 
-                       <Button fx:id="btnSaveEdit" focusTraversable="false" maxWidth="100" minHeight="40" minWidth="100" onAction="#methodSaveEditClient" text="Сохранить" />
-
-               </VBox>
-           </VBox>
          </content>
        </Tab>
      </tabs>
    </TabPane>
-
-
 
 </VBox>

@@ -72,7 +72,6 @@ public class AuthUserDateBase {
 
        PreparedStatement statement = null;
 
-
        try {
 
            statement = ConnectDateBase.connection.prepareStatement(
