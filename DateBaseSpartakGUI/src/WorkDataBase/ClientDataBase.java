@@ -1,5 +1,7 @@
 package WorkDataBase;
 
+import Logger.LOG;
+import MySQLDB.ServerMySQL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,6 +27,44 @@ public class ClientDataBase {
         }
     }
 
+//    Метод редактирует данные клиента
+public static boolean editClientDateBase(ClientClass client){
+
+    PreparedStatement statement = null;
+
+    try {
+
+        statement = ServerMySQL.connection.prepareStatement(
+                "UPDATE client_list SET " +
+                        "FirstName = ?," +
+                        " LastName = ?," +
+                        " PatName = ?," +
+                        " Telephone = ?," +
+                        " DataBirth = ?," +
+                        " Email = ?," +
+                        " InfoClient = ?" +
+                        "  WHERE id = ?;"
+        );
+
+        statement.setString(1, client.getFirstName());
+        statement.setString(2, client.getLastName());
+        statement.setString(3, client.getPatronymicName());
+        statement.setString(4, client.getTelephone());
+        statement.setString(5, client.getDateBirth());
+        statement.setString(6, client.getEmail());
+        statement.setString(7, client.getInfoClient());
+        statement.setInt(8, client.getId());
+        statement.executeUpdate();
+
+        return true;
+    } catch (SQLException e) {
+        e.printStackTrace();
+
+    } finally {
+        statementClose(statement);
+    }
+    return false;
+}
 
 //    Метод добавляет нового клиента в базу данных
 
@@ -38,7 +78,7 @@ public class ClientDataBase {
                     "id, FirstName, LastName, PatName, Telephone, DataBirth, Email, InfoClient, BOOL_DEL" +
                     ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
-            statement = ConnectDateBase.connection.prepareStatement(query);
+            statement = ServerMySQL.connection.prepareStatement(query);
 
             statement.setInt(1, client.getId());
             statement.setString(2, client.getFirstName());
@@ -61,6 +101,26 @@ public class ClientDataBase {
         return false;
     }
 
+//    Редактор ID в MySQL
+public static void startNewID(String nameClass, int numberIP){
+
+    PreparedStatement statement = null;
+
+    try {
+
+        String query = "INSERT INTO UP_ID (Class, Value_IP) VALUES (?, ?);";
+        statement = ServerMySQL.connection.prepareStatement(query);
+        statement.setString(1, nameClass);
+        statement.setInt(2, numberIP);
+        statement.executeUpdate();
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } finally {
+        statementClose(statement);
+    }
+
+}
 
     // Метод добавляет новый id
 
@@ -71,7 +131,7 @@ public class ClientDataBase {
 
         try {
 
-            statement = ConnectDateBase.connection.prepareStatement(
+            statement = ServerMySQL.connection.prepareStatement(
                     "SELECT * FROM UP_ID WHERE Class = ?;"
             );
 
@@ -87,7 +147,7 @@ public class ClientDataBase {
                 resultSetClose(rs);
                 statementClose(statement);
 
-                statement = ConnectDateBase.connection.prepareStatement(
+                statement = ServerMySQL.connection.prepareStatement(
                         "UPDATE UP_ID SET Value_IP = ? WHERE class = ?;"
                 );
 
@@ -120,7 +180,7 @@ public class ClientDataBase {
 
         try {
 
-            statement = ConnectDateBase.connection.prepareStatement(
+            statement = ServerMySQL.connection.prepareStatement(
                     "SELECT * FROM client_list WHERE BOOL_DEL = ?;"
             );
 
@@ -156,5 +216,34 @@ public class ClientDataBase {
         }
 
         return null;
+    }
+
+
+    public static void delClient(ClientClass clientClass){
+
+        PreparedStatement statement = null;
+
+        try {
+
+
+                statement = ServerMySQL.connection.prepareStatement(
+                        "UPDATE client_list SET BOOL_DEL = ? WHERE id = ?;"
+                );
+
+//                Новый IP
+
+
+                statement.setBoolean(1, true);
+                statement.setInt(2, clientClass.getId());
+                statement.executeUpdate();
+
+            LOG.info("Клиент удален из базы данных \n" + clientClass.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            LOG.error("Ошибка при удалении \n " + clientClass.toString(), e);
+        } finally {
+            statementClose(statement);
+        }
+
     }
 }

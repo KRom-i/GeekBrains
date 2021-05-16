@@ -1,7 +1,10 @@
 package WorkDataBase;
 
+import javafx.scene.text.Text;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ClientClass {
 
@@ -15,7 +18,6 @@ public class ClientClass {
     private String Email = "";
     private String infoClient = "";
     private List<Object> subscription;
-
     private final String NAME_Class_DB = "Client";
 
     public String nameClassDataBase(){
@@ -102,6 +104,56 @@ public class ClientClass {
         this.subscription.add(subscription);
     }
 
+    public boolean booleanFind(String findStr){
+
+        int control = 0;
+
+        String[] strings = findStr.split (" ");
+
+        for(String s: strings
+
+            ) {
+
+            s = editText (s);
+
+            if (this.getLastName ().startsWith (s)){
+                control++;
+                continue;
+            }
+            if (this.getFirstName ().startsWith (s)){
+                control++;
+                continue;
+            }
+            if (this.getPatronymicName ().startsWith (s)){
+                control++;
+                continue;
+            }
+        }
+
+        return control == strings.length;
+    }
+
+
+
+    private String editText(String str){
+
+        String newString = "";
+        if (str.length () > 0) {
+            String[] strings = str.split ("");
+            for(int i = 0; i < strings.length; i++) {
+                if (i == 0) {
+                    strings[i] = strings[i].toUpperCase (Locale.ROOT);
+                } else {
+                    strings[i] = strings[i].toLowerCase (Locale.ROOT);
+                }
+                newString += strings[i];
+            }
+        }
+        return newString;
+
+    }
+
+
     @Override
     public String toString (){
 
@@ -119,4 +171,12 @@ public class ClientClass {
                 '}';
 
     }
+
+
+    public String toStringIteam (){
+
+        return String.format ("%s %s %s", lastName, firstName, patronymicName);
+
+    }
+
 }

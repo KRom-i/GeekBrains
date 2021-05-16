@@ -1,5 +1,7 @@
 package WorkDataBase;
 
+import MySQLDB.ServerMySQL;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,7 +35,7 @@ public class AuthUserDateBase {
 
         try {
 
-            statement = ConnectDateBase.connection.prepareStatement(
+            statement = ServerMySQL.connection.prepareStatement(
                     "SELECT * FROM users WHERE login = ?;"
             );
 
@@ -74,7 +76,7 @@ public class AuthUserDateBase {
 
        try {
 
-           statement = ConnectDateBase.connection.prepareStatement(
+           statement = ServerMySQL.connection.prepareStatement(
                    "UPDATE users SET authstart = ? WHERE login = ?;"
            );
 
@@ -101,7 +103,7 @@ public static UserSpartak checkUserAuthStart(){
 
     try {
 
-        statement = ConnectDateBase.connection.prepareStatement(
+        statement = ServerMySQL.connection.prepareStatement(
                 "SELECT * FROM users WHERE authstart = ?;"
         );
 
