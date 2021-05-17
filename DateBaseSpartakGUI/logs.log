@@ -1672,3 +1672,41 @@ ClientClass{id=2006, firstName='Роман', lastName='Кутькин', patronym
 2021-05-17 02:19:57 INFO  Application:11 - Успешный старт приложения.
 2021-05-17 02:22:50 INFO  Application:11 - Успешный старт приложения.
 2021-05-17 02:23:21 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:08:40 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:08:47 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:13:16 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:13:19 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:13:36 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:14:35 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:15:53 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:16:14 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:17:19 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:17:37 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:17:42 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:18:05 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:18:08 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:18:52 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:22:05 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:23:06 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:23:39 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:23:41 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:28:45 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:29:41 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:29:47 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:49:09 ERROR Application:15 - javafx.fxml.LoadException: 
+/C:/Users/%d0%a0%d0%be%d0%bc%d0%b0%d0%bd/Documents/REPO_My/DateBaseSpartakGUI/out/production/DateBaseSpartakGUI/GUIMain/GUIMain.fxml
+
+2021-05-17 03:49:09 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:49:17 ERROR Application:15 - javafx.fxml.LoadException: 
+/C:/Users/%d0%a0%d0%be%d0%bc%d0%b0%d0%bd/Documents/REPO_My/DateBaseSpartakGUI/out/production/DateBaseSpartakGUI/GUIMain/GUIMain.fxml
+
+2021-05-17 03:49:17 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:49:45 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:49:54 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:52:13 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:52:14 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:52:36 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:52:37 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 03:52:47 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:54:22 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 03:56:26 INFO  Application:11 - Приложение закрыто без ошибок.

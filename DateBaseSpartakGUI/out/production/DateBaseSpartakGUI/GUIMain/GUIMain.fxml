@@ -36,6 +36,7 @@
                              <Button minHeight="60" minWidth="245" onAction="#methodFindClientDataBase" text="Поиск" />
                              <Button fx:id="buttonGuest" minHeight="60" minWidth="245" text="Гость" />
                              <Button fx:id="buttonNewClient" minHeight="60" minWidth="245" text="Новый клиент" onAction="#openEditVboxNewClient"/>
+                             <Button fx:id="buttonListClients" minHeight="60" minWidth="245" text="Список клиентов" onAction="#openListClients"/>
                          </VBox>
 <!--                            <Label maxWidth="10" style="-fx-background-color: red;" VBox.vgrow="ALWAYS" />-->
                              <VBox fx:id="vBOXEditClient" alignment="TOP_CENTER" opacity="0.3" spacing="10" VBox.vgrow="ALWAYS">
@@ -53,14 +54,17 @@
                                      <Button fx:id="ButtonCancelEditDateClient" onAction="#methodCancelEditDateClient" focusTraversable="false" managed="false" maxWidth="150" minHeight="40" minWidth="150" text="Отмена" visible="false" />
                                      <Button fx:id="btnSaveEdit" focusTraversable="false" managed="false" maxWidth="150" minHeight="40" minWidth="150" onAction="#methodSaveEditClient" text="Сохранить" visible="false" />
                                  </HBox>
-                                 <HBox VBox.vgrow="ALWAYS" alignment="CENTER_RIGHT">
+                                 <HBox VBox.vgrow="ALWAYS" alignment="TOP_RIGHT">
                                  <Button fx:id="buttonOrderService" focusTraversable="false" managed="false" maxWidth="150" minHeight="80" minWidth="310" onAction="#methodOrderService" text="Оформить услугу" visible="false" />
                                  </HBox>
                              </VBox>
+
                         <VBox fx:id="vBoxOrderService" spacing="10" VBox.vgrow="ALWAYS" managed="false" visible="false">
                             <Button text="Отмена" onAction="#methodCancelOrderService" maxWidth="150" minHeight="40"
                                     minWidth="150"/>
                         </VBox>
+                 <ListView fx:id="listViewListClients" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" managed="false" visible="false" onMouseClicked="#addFindClient">
+                 </ListView>
                   <padding>
                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                   </padding>

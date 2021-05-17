@@ -12,11 +12,14 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +29,8 @@ import java.util.concurrent.Executors;
 
 public class GUIMainController {
 
+    @FXML
+    private ListView<String> listViewListClients;
     @FXML
     private VBox vBoxOrderService;
     @FXML
@@ -389,8 +394,9 @@ public class GUIMainController {
                 textDateBirth,
                 textEmail);
         setVisibleEndManaged(false, btnSaveEdit, ButtonCancelEditDateClient);
-        setVisibleEndManaged(true, ButtonEditDateClient, ButtonDelClient, buttonOrderService);
+        setVisibleEndManaged(true, ButtonEditDateClient, ButtonDelClient, buttonOrderService, vBOXEditClient);
         vBOXEditClient.setOpacity(1);
+        setVisibleEndManaged(false, listViewListClients);
 //        vBoxFindClient.setManaged(false);
 //        vBoxFindClient.setVisible(false);
     }
@@ -433,6 +439,7 @@ public class GUIMainController {
         }
         setVisibleEndManaged(false, btnSaveEdit, ButtonCancelEditDateClient, buttonOrderService);
         setVisibleEndManaged(true, ButtonEditDateClient, ButtonDelClient);
+        setVisibleEndManaged(false, listViewListClients);
 
     }
 
@@ -488,6 +495,7 @@ public class GUIMainController {
 
 //    Доступ для добавления нового клиента
     public void openEditVboxNewClient (ActionEvent actionEvent){
+
         clientClassActive = null;
         clearTextFields(
                 textFirtsName,
@@ -510,8 +518,8 @@ public class GUIMainController {
             }
             textFieldFind.clear();
         }
-        setVisibleEndManaged(true, btnSaveEdit);
-        setVisibleEndManaged(false, ButtonEditDateClient, ButtonDelClient, buttonOrderService);
+        setVisibleEndManaged(true, btnSaveEdit, vBOXEditClient);
+        setVisibleEndManaged(false, ButtonEditDateClient, ButtonDelClient, buttonOrderService, listViewListClients);
         textFieldEdit(true,
                 textInfoClient,
                 textFirtsName,
@@ -529,6 +537,7 @@ public class GUIMainController {
         setVisibleEndManaged(false, vBOXEditClient);
         setVisibleEndManaged(false, vBoxFindClient);
         setVisibleEndManaged(true, vBoxOrderService);
+        setVisibleEndManaged(false, listViewListClients);
     }
 
     //    Отмена оформления новой услуги
@@ -537,6 +546,28 @@ public class GUIMainController {
         setVisibleEndManaged(true, vBOXEditClient);
         setVisibleEndManaged(true, vBoxFindClient);
         setVisibleEndManaged(false, vBoxOrderService);
+        setVisibleEndManaged(false, listViewListClients);
     }
 
+
+    public void openListClients (ActionEvent actionEvent){
+        setVisibleEndManaged(true, listViewListClients);
+        setVisibleEndManaged(false, vBOXEditClient);
+        setVisibleEndManaged(false, vBoxOrderService);
+        Platform.runLater(()->{
+            listViewListClients.getItems().clear();
+            for(int i = 0; i < clientClassList.size(); i++) {
+                listViewListClients.getItems().add(clientClassList.get(i).toStringIteam());
+            }
+        });
+    }
+
+    public void addFindClient (MouseEvent mouseEvent){
+
+        if (mouseEvent.getClickCount() == 2){
+            String name = listViewListClients.getSelectionModel().getSelectedItem();
+            textFieldFind.setText(name);
+            methodFindClientDataBase();
+        }
+    }
 }

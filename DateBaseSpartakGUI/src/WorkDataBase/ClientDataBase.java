@@ -169,7 +169,8 @@ public static void startNewID(String nameClass, int numberIP){
         return 0;
     }
 
-//     Метод обновляет ClientList для работы
+
+//    Тест сортировки
 
     public static List<ClientClass> newListClient() {
 
@@ -179,6 +180,69 @@ public static void startNewID(String nameClass, int numberIP){
         List<ClientClass> clientList = new ArrayList<>();
 
         try {
+
+            statement = ServerMySQL.connection.prepareStatement(
+                    "SELECT * FROM client_list ORDER BY LastName ASC;"
+            );
+//            statement.executeQuery();
+
+
+//            statement = ServerMySQL.connection.prepareStatement(
+//                    "SELECT * FROM client_list WHERE BOOL_DEL = ?;"
+//            );
+//
+//            statement.setBoolean(1, false);
+
+            rs = statement.executeQuery();
+
+
+            while (rs.next()) {
+
+                if (!rs.getBoolean("BOOL_DEL")) {
+
+                    ClientClass clientNew = new ClientClass();
+
+                    clientNew.setId(rs.getInt("id"));
+                    clientNew.setFirstName(rs.getString("FirstName"));
+                    clientNew.setLastName(rs.getString("LastName"));
+                    clientNew.setPatronymicName(rs.getString("PatName"));
+                    clientNew.setTelephone(rs.getString("Telephone"));
+                    clientNew.setDateBirth(rs.getString("DataBirth"));
+                    clientNew.setEmail(rs.getString("Email"));
+                    clientNew.setInfoClient(rs.getString("InfoClient"));
+
+                    clientList.add(clientNew);
+                }
+            }
+
+            return clientList;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            statementClose(statement);
+            resultSetClose(rs);
+        }
+
+        return null;
+    }
+
+//     Метод обновляет ClientList для работы
+/*
+    public static List<ClientClass> newListClient() {
+
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        List<ClientClass> clientList = new ArrayList<>();
+
+        try {
+
+            statement = ServerMySQL.connection.prepareStatement(
+                    "SELECT * FROM client_list ORDER BY LastName ASC;"
+            );
+            statement.executeQuery();
+
 
             statement = ServerMySQL.connection.prepareStatement(
                     "SELECT * FROM client_list WHERE BOOL_DEL = ?;"
@@ -217,7 +281,7 @@ public static void startNewID(String nameClass, int numberIP){
 
         return null;
     }
-
+*/
 
     public static void delClient(ClientClass clientClass){
 
