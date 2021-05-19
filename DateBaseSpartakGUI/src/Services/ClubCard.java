@@ -110,7 +110,7 @@ public class ClubCard {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (getBalance() <= 0){
-                    labelBalance.setStyle("-fx-background-color: #FF6347");
+
                 }
             }
         });

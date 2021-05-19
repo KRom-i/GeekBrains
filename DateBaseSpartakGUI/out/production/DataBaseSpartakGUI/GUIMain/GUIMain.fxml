@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <!--    8.0.171-->
-<VBox fx:id="vBOX" maxHeight="Infinity" maxWidth="Infinity" spacing="5" styleClass="my-Box-class" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUIMain.GUIMainController">
+<VBox fx:id="vBOX" maxHeight="Infinity" maxWidth="Infinity" spacing="10" styleClass="my-Box-class" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUIMain.GUIMainController">
    <MenuBar>
      <menus>
        <Menu mnemonicParsing="false" text="File">

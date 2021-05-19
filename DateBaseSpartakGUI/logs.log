@@ -2134,3 +2134,94 @@ ClientClass{id=2007, firstName='Роман', lastName='Кутькин', patronym
 2021-05-19 04:05:44 INFO  Application:11 - Приложение закрыто без ошибок.
 2021-05-19 04:06:19 INFO  Application:11 - Успешный старт приложения.
 2021-05-19 04:06:35 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-19 07:42:18 INFO  Application:11 - Успешный старт приложения.
+2021-05-19 07:45:11 INFO  Application:11 - Клиент удален из базы данных 
+ClientClass{id=2011, firstName='Роман', lastName='Тест', patronymicName='', telephone='', dateBirth='', Email='', infoClient='', subscription=null, NAME_Class_DB='Client'}
+2021-05-19 07:46:40 INFO  Application:11 - Добавление нового клиента: ClientClass{id=2012, firstName='Роман', lastName='Кутькин', patronymicName='Игоревич', telephone='+79041086366', dateBirth='12.02.1994', Email='', infoClient='
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+', subscription=null, NAME_Class_DB='Client'}
+2021-05-19 07:50:41 INFO  Application:11 - Редактор клиента: ClientClass{id=2012, firstName='Роман', lastName='Кутькин', patronymicName='Игоревич', telephone='+79041086366', dateBirth='12.02.1994', Email='', infoClient='
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+', subscription=null, NAME_Class_DB='Client'}
+2021-05-19 07:50:48 INFO  Application:11 - Редактор клиента: ClientClass{id=2012, firstName='Роман', lastName='Кутькин', patronymicName='Игоревич', telephone='+79041086366', dateBirth='12.02.1994', Email='', infoClient='
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+', subscription=null, NAME_Class_DB='Client'}
+2021-05-19 07:55:24 INFO  Application:11 - Приложение закрыто без ошибок.
