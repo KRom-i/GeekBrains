@@ -1,0 +1,27 @@
+Label labelNumberGroup = new Label("Гр: ");
+
+TextField textNumberGroup = new TextField(String.valueOf(getNumberGroup()));
+textNumberGroup.setMaxWidth(35);
+textNumberGroup.setEditable(false);
+
+hBoxEdit.getChildren().add(labelNumberGroup);
+hBoxEdit.getChildren().add(textNumberGroup);
+
+textNumberGroup.setEditable(true);
+
+textNumberGroup.setEditable(false);
+
+
+hBoxEdit.setOpacity(0.7);
+
+HBox hBoxMain = new HBox(hBoxEdit);
+hBoxMain.setSpacing(5);
+hBoxMain.getChildren().add(buttonEdit);
+hBoxMain.getChildren().add(buttonSave);
+hBoxMain.getChildren().add(buttonDel);
+
+hBoxEdit.setOpacity(1);
+
+hBoxEdit.setOpacity(0.7);
+
+return hBoxMain;

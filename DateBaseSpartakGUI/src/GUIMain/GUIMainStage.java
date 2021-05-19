@@ -16,6 +16,8 @@ public class GUIMainStage extends Application {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("GUIMain.fxml"));
         Scene scene = new Scene(root);
+        String stylesheet = getClass().getResource("Styles/style.css").toExternalForm();
+        scene.getStylesheets().add(stylesheet);
         primaryStage.setTitle("DBS V 1.0");
 //        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 //        double width = screenSize.getWidth();
@@ -28,14 +30,15 @@ public class GUIMainStage extends Application {
 //        scene.setFill(Color.TRANSPARENT);
 //        primaryStage.setWidth(width - (width / 3));
 //        primaryStage.setHeight(height - (height / 3));
-        primaryStage.setHeight (780);
-        primaryStage.setWidth (1080);
+        primaryStage.setHeight (1000);
+        primaryStage.setWidth (1600);
         primaryStage.setScene(scene);
         primaryStage.show();
-        } catch (IOException e) {
+        LOG.info ("Успешный старт приложения.");
+        } catch (Exception e) {
             LOG.error ("Ошибка при запуске приложения.", e);
         }
-        LOG.info ("Успешный старт приложения.");
+
     }
 
 

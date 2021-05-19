@@ -34,9 +34,9 @@
                          <VBox fx:id="vBoxFindClient" minHeight="0.0" minWidth="0.0" spacing="10" VBox.vgrow="ALWAYS">
                              <TextField fx:id="textFieldFind" focusTraversable="false" maxWidth="500" minHeight="60" minWidth="500" onAction="#methodFindClientDataBase" onKeyPressed="#methodFindClientDataBase" promptText="Ввод данных для поиска" />
                              <Button minHeight="60" minWidth="245" onAction="#methodFindClientDataBase" text="Поиск" />
-                             <Button fx:id="buttonGuest" minHeight="60" minWidth="245" text="Гость" />
-                             <Button fx:id="buttonNewClient" minHeight="60" minWidth="245" text="Новый клиент" onAction="#openEditVboxNewClient"/>
-                             <Button fx:id="buttonListClients" minHeight="60" minWidth="245" text="Список клиентов" onAction="#openListClients"/>
+                             <Button fx:id="buttonGuest" minHeight="40" minWidth="245" text="Гость" />
+                             <Button fx:id="buttonNewClient" minHeight="40" minWidth="245" text="Новый клиент" onAction="#openEditVboxNewClient"/>
+                             <Button fx:id="buttonListClients" minHeight="40" minWidth="245" text="Список клиентов" onAction="#openListClients"/>
                          </VBox>
 <!--                            <Label maxWidth="10" style="-fx-background-color: red;" VBox.vgrow="ALWAYS" />-->
                              <VBox fx:id="vBOXEditClient" alignment="TOP_CENTER" opacity="0.3" spacing="10" VBox.vgrow="ALWAYS">

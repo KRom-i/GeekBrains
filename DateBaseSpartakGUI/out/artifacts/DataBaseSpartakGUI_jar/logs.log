@@ -1,0 +1,20 @@
+2021-05-17 21:24:45 ERROR Application:15 - java.sql.SQLException: No suitable driver found for jdbc:mysql://127.0.0.1:3306/DateBaseSpartak
+2021-05-17 21:24:45 ERROR Application:15 - javafx.fxml.LoadException: 
+file:/C:/Users/%d0%a0%d0%be%d0%bc%d0%b0%d0%bd/Documents/REPO_My/DateBaseSpartakGUI/out/artifacts/DataBaseSpartakGUI_jar/DataBaseSpartakGUI.jar!/GUIMain/GUIMain.fxml
+
+2021-05-17 21:27:21 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 21:31:12 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 21:32:11 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 21:32:21 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 21:32:52 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 21:35:09 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-17 21:51:08 INFO  Application:11 - Успешный старт приложения.
+2021-05-17 22:09:59 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-18 02:04:21 INFO  Application:11 - Успешный старт приложения.
+2021-05-18 02:08:06 INFO  Application:11 - Приложение закрыто без ошибок.
+2021-05-18 02:47:02 ERROR Application:15 - java.sql.SQLNonTransientConnectionException: Cannot load connection class because of underlying exception: com.mysql.cj.exceptions.WrongArgumentException: Failed to parse the host:port pair 'null:null'.
+2021-05-18 02:47:02 ERROR Application:15 - javafx.fxml.LoadException: 
+file:/C:/Users/%d0%a0%d0%be%d0%bc%d0%b0%d0%bd/Documents/REPO_My/DateBaseSpartakGUI/out/artifacts/DataBaseSpartakGUI_jar/DataBaseSpartakGUI.jar!/GUIMain/GUIMain.fxml
+
+2021-05-18 02:48:17 INFO  Application:11 - Успешный старт приложения.
+2021-05-18 02:49:03 INFO  Application:11 - Приложение закрыто без ошибок.

@@ -1,0 +1,203 @@
+.button {
+    -fx-background-radius: 5;
+    -fx-background-color: #696969;
+    -fx-text-fill: white;
+}
+
+.button:hover {
+    -fx-background-radius: 5;
+    -fx-background-color: #FFD700;
+    -fx-text-fill: black;
+}
+
+.gold-button {
+    -fx-background-radius: 5;
+    -fx-background-color: #DAA520;
+    -fx-text-fill: white;
+}
+
+.gold-button:hover {
+    -fx-background-radius: 5;
+    -fx-background-color: #FFD700;
+    -fx-text-fill: black;
+}
+
+.del-button {
+    -fx-background-radius: 5;
+    -fx-background-color: #696969;
+    -fx-text-fill: white;
+}
+
+.del-button:hover {
+    -fx-background-radius: 5;
+    -fx-background-color: #FF6347;
+    -fx-text-fill: black;
+}
+
+.save-button {
+    -fx-background-radius: 5;
+    -fx-background-color: #696969;
+    -fx-text-fill: white;
+}
+
+.save-button:hover {
+    -fx-background-radius: 5;
+    -fx-background-color: #98FB98;
+    -fx-text-fill: black;
+}
+
+.btn-close {
+    -fx-background-radius: 5;
+    -fx-background-color: #696969;
+    -fx-text-fill: white;
+}
+
+.btn-close:hover{
+    -fx-background-radius: 5;
+    -fx-background-color: #FFD700;
+    -fx-text-fill: #FFD700;
+}
+
+
+
+
+
+.root {
+
+  -fx-background-radius: 5;
+  -fx-background-color: #D3D3D3;
+}
+.rootdialog {
+
+  -fx-background-radius: 5;
+  -fx-background-color: #D3D3D3;
+}
+
+.Box {
+    -fx-background-radius: 5;
+    -fx-background-color: #F8F8FF;
+}
+
+
+
+.lable {
+   -fx-text-fill: black;
+}
+
+
+.list-cell{
+-fx-background-radius: 5;
+    -fx-background-color: white;
+    -fx-text-fill: black;
+        -fx-border-radius: 5;
+        -fx-border-color: #A9A9A9;
+}
+
+
+.list-cell: odd {
+-fx-background-radius: 5;
+    -fx-background-color: white;
+        -fx-border-radius: 5;
+        -fx-border-color: #A9A9A9;
+         }
+
+.list-cell: selected {
+-fx-border-radius: 5;
+        -fx-border-color: #A9A9A9;
+    -fx-background-radius: 5;
+    -fx-background-color: #D3D3D3;
+}
+
+.list-cell: hover{
+-fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #FFD700;
+}
+
+
+
+.context-menu {
+    -fx-background-radius: 5;
+    -fx-background-color:white;
+    -fx-text-fill: black;
+
+}
+
+.context-menu:focused {
+    -fx-background-color:white;
+    -fx-focus-color:black;
+    -fx-text-fill: white;
+}
+
+.menu-item{
+-fx-background-color:white;
+    -fx-text-fill: black;
+}
+
+.menu-item:focused {
+    -fx-background-color:black;
+    -fx-focus-color:black;
+    -fx-text-fill: white;
+}
+
+.menu{
+-fx-background-color:white;
+    -fx-text-fill: black;;
+}
+
+.menu:focused {
+    -fx-background-color:black;
+    -fx-focus-color:black;
+    -fx-text-fill: black;
+}
+
+
+
+.text-field {
+-fx-background-radius: 5;
+-fx-text-fill: black;
+-fx-background-color: #A9A9A9;
+-fx-control-inner-background: #A9A9A9;
+-fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #A9A9A9;
+}
+
+
+
+
+.text-field:hover{
+-fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #FFD700;
+}
+
+.text-field: focused {
+-fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #FFD700;
+}
+
+
+
+.text-area {
+    -fx-background-radius: 5;
+    -fx-text-fill: black;
+    -fx-background-color: #A9A9A9;
+    -fx-control-inner-background: #A9A9A9;
+    -fx-background-radius: 5;
+        -fx-border-radius: 5;
+        -fx-border-color: #A9A9A9;
+    }
+
+.text-area:hover{
+-fx-background-radius: 5;
+    -fx-border-radius: 5;
+        -fx-border-color: #FFD700;
+    }
+
+.text-area: focused {
+-fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #FFD700;
+}

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DateBaseSpartakGUI.iml" filepath="$PROJECT_DIR$/DateBaseSpartakGUI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DataBaseSpartakGUI.iml" filepath="$PROJECT_DIR$/DataBaseSpartakGUI.iml" />
     </modules>
   </component>
 </project>
