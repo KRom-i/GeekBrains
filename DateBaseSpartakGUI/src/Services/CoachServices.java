@@ -1,13 +1,20 @@
 package Services;
 
+import Logger.LOG;
+import MySQLDB.ServerMySQL;
+import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
-public class CoachServices {
+public class CoachServices extends Service{
 
     private int Type;
     private int numberGroup;
@@ -178,19 +185,42 @@ buttonDel.getStyleClass().add("del-button");
         buttonDel.setVisible(false);
         buttonDel.setManaged(false);
 
+        Label labelValNumberGroup = new Label(getNumberGroup() + "");
+        Label labelValName = new Label(getName()+ "");
+        Label labelValCost = new Label(getCost() + "");
+        Label labelValNUmberVisits = new Label(getNumberVisits() + "");
+//        Label labelValBalance = new Label(getBalance() + "");
+
         hBoxEdit.getChildren().add(labelNumberGroup);
         hBoxEdit.getChildren().add(textNumberGroup);
+        hBoxEdit.getChildren().add(labelValNumberGroup);
+        textNumberGroup.setVisible(false);
+        textNumberGroup.setManaged(false);
         hBoxEdit.getChildren().add(labelName);
         hBoxEdit.getChildren().add(textFieldName);
+        hBoxEdit.getChildren().add(labelValName);
+        textFieldName.setVisible(false);
+        textFieldName.setManaged(false);
         hBoxEdit.getChildren().add(labelCost);
         hBoxEdit.getChildren().add(textFieldCost);
+        hBoxEdit.getChildren().add(labelValCost);
+        textFieldCost.setVisible(false);
+        textFieldCost.setManaged(false);
         hBoxEdit.getChildren().add(labelNumberVisits);
         hBoxEdit.getChildren().add(textFieldNumberVisits);
+        hBoxEdit.getChildren().add(labelValNUmberVisits);
+        textFieldNumberVisits.setVisible(false);
+        textFieldNumberVisits.setManaged(false);
 //        hBoxEdit.getChildren().add(labelBalance);
 //        hBoxEdit.getChildren().add(textFieldBalance);
+//        textFieldBalance.setVisible(false);
+//        textFieldBalance.setManaged(false);
+//        hBoxEdit.getChildren().add(labelValBalance);
+//        labelValBalance.setMinWidth(50);
 //        hBoxEdit.getChildren().add(labelAddBalance);
 //        hBoxEdit.getChildren().add(spinnerCost);
-        hBoxEdit.setOpacity(0.7);
+
+        //    hBoxEdit.setOpacity(0.7);
 
         HBox hBoxMain = new HBox(hBoxEdit);
         hBoxMain.setSpacing(5);
@@ -201,7 +231,7 @@ buttonDel.getStyleClass().add("del-button");
         buttonEdit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                hBoxEdit.setOpacity(1);
+                //    hBoxEdit.setOpacity(1);
                 textNumberGroup.setEditable(true);
                 textFieldCost.setEditable(true);
                 textFieldName.setEditable(true);
@@ -217,13 +247,34 @@ buttonDel.getStyleClass().add("del-button");
                 buttonSave.setManaged(true);
                 buttonDel.setVisible(true);
                 buttonDel.setManaged(true);
+                labelValNumberGroup.setVisible(false);
+                labelValName.setVisible(false);
+                labelValCost.setVisible(false);
+                labelValNUmberVisits.setVisible(false);
+//                labelValBalance.setVisible(false);
+                labelValNumberGroup.setManaged(false);
+                labelValName.setManaged(false);
+                labelValCost.setManaged(false);
+                labelValNUmberVisits.setManaged(false);
+//                labelValBalance.setManaged(false);
+//                textFieldBalance.setManaged(true);
+//                textFieldBalance.setVisible(true);
+                textFieldCost.setManaged(true);
+                textFieldCost.setVisible(true);
+                textFieldName.setManaged(true);
+                textFieldName.setVisible(true);
+                textNumberGroup.setManaged(true);
+                textNumberGroup.setVisible(true);
+                textFieldNumberVisits.setManaged(true);
+                textFieldNumberVisits.setVisible(true);
+
             }
         });
 
         buttonSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                hBoxEdit.setOpacity(0.7);
+                //    hBoxEdit.setOpacity(0.7);
                 textNumberGroup.setEditable(false);
                 textFieldCost.setEditable(false);
                 textFieldName.setEditable(false);
@@ -239,12 +290,79 @@ buttonDel.getStyleClass().add("del-button");
                 buttonSave.setManaged(false);
                 buttonDel.setVisible(false);
                 buttonDel.setManaged(false);
+
+                labelValNumberGroup.setVisible(true);
+                labelValName.setVisible(true);
+                labelValCost.setVisible(true);
+                labelValNUmberVisits.setVisible(true);
+//                labelValBalance.setVisible(true);
+                labelValNumberGroup.setManaged(true);
+                labelValName.setManaged(true);
+                labelValCost.setManaged(true);
+                labelValNUmberVisits.setManaged(true);
+//                labelValBalance.setManaged(true);
+
+//                textFieldBalance.setManaged(false);
+//                textFieldBalance.setVisible(false);
+                textFieldCost.setManaged(false);
+                textFieldCost.setVisible(false);
+                textFieldName.setManaged(false);
+                textFieldName.setVisible(false);
+                textNumberGroup.setManaged(false);
+                textNumberGroup.setVisible(false);
+                textFieldNumberVisits.setManaged(false);
+                textFieldNumberVisits.setVisible(false);
             }
         });
 
 //        if (getBalance() <= 0){
 //            textFieldBalance.setStyle("-fx-background-color: #FF6347");
+//            labelValBalance.setStyle("-fx-text-fill: #FF6347");
 //        }
         return hBoxMain;
+    }
+
+    public static class GUIMainStage extends Application {
+
+        @Override
+        public void start(Stage primaryStage){
+            try {
+                Parent root = FXMLLoader.load(getClass().getResource("GUIMain.fxml"));
+            Scene scene = new Scene(root);
+            String stylesheet = getClass().getResource("Styles/style.css").toExternalForm();
+            scene.getStylesheets().add(stylesheet);
+            primaryStage.setTitle("DBS V 1.0");
+    //        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    //        double width = screenSize.getWidth();
+    //        double height = screenSize.getHeight();
+    //        primaryStage.setY(height / 6);
+    //        primaryStage.setX(width / 6);
+    //        primaryStage.initStyle(StageStyle.UNDECORATED);
+    //        String css = this.getClass().getResource("/styles/style.css").toExternalForm();
+    //        scene.getStylesheets().add(css);
+    //        scene.setFill(Color.TRANSPARENT);
+    //        primaryStage.setWidth(width - (width / 3));
+    //        primaryStage.setHeight(height - (height / 3));
+            primaryStage.setHeight (1000);
+            primaryStage.setWidth (1600);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+            LOG.info ("Успешный старт приложения.");
+            } catch (Exception e) {
+                LOG.error ("Ошибка при запуске приложения.", e);
+            }
+
+        }
+
+
+        public static void main(String[] args) {
+                launch(args);
+        }
+
+        @Override
+        public void stop(){
+            ServerMySQL.disconnect();
+            LOG.info ("Приложение закрыто без ошибок.");
+        }
     }
 }

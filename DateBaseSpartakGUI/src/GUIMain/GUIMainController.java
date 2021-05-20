@@ -1,22 +1,22 @@
 package GUIMain;
 
 import Bot.BotTelegram;
+import Cash.Transaction;
+import GUIMain.CustomStage.DialogStageCustom;
+import GUIMain.CustomStage.LabelInfo;
 import Logger.LOG;
 import MySQLDB.ServerMySQL;
+import Services.ActionService;
+import Services.Service;
 import WorkDataBase.*;
-import com.sun.javafx.scene.control.skin.TextFieldSkin;
-import com.sun.javafx.scene.text.HitInfo;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -26,8 +26,6 @@ import org.telegram.telegrambots.TelegramBotsApi;
 import СustomTitlePanel.ChoiceTitlePanel;
 import СustomTitlePanel.EditServicesTitlePanel;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +35,8 @@ import java.util.concurrent.Executors;
 
 public class GUIMainController {
 
+    @FXML
+    private VBox panelUserInterface;
     @FXML
     private VBox vBoxEditServices;
     @FXML
@@ -81,7 +81,7 @@ public class GUIMainController {
     private TextField textPatronymicName;
     private List<ClientClass> clientClassList;
     private ClientClass clientClassActive;
-
+    
     public void initialize() {
 
         ServerMySQL.getConnection ();
@@ -99,7 +99,7 @@ public class GUIMainController {
         new ChoiceTitlePanel(vBoxChoiceService, 5);
         new EditServicesTitlePanel(vBoxEditServices, 5);
 
-
+        new LabelInfo(panelUserInterface);
 
 //        initBot ();
 
@@ -143,10 +143,8 @@ public class GUIMainController {
 
 //    Редактирование или добавление нового клиента
     public void methodSaveEditClient(ActionEvent actionEvent) {
-        labelSaveEdit.setText ("");
-        labelSaveEdit.setOpacity (0);
 
-        if (clientClassActive == null){
+        if (ActionClient.getClient() == null){
         if (textFirtsName.getText ().length () < 2 &&
                 textLastName.getText ().length () < 2) {
         } else {
@@ -203,18 +201,18 @@ public class GUIMainController {
             } else {
                 try {
 
-                    clientClassActive.setFirstName(editText(textLastName.getText()));
-                    clientClassActive.setLastName(editText(textFirtsName.getText()));
-                    clientClassActive.setPatronymicName(editText(textPatronymicName.getText()));
+                    ActionClient.getClient().setFirstName(editText(textLastName.getText()));
+                    ActionClient.getClient().setLastName(editText(textFirtsName.getText()));
+                    ActionClient.getClient().setPatronymicName(editText(textPatronymicName.getText()));
 
-                    clientClassActive.setTelephone(checkText(textTelephone));
-                    clientClassActive.setDateBirth(checkText(textDateBirth));
-                    clientClassActive.setEmail(checkText(textEmail));
-                    clientClassActive.setInfoClient(checkText(textInfoClient));
-                    ClientDataBase.editClientDateBase(clientClassActive);
+                    ActionClient.getClient().setTelephone(checkText(textTelephone));
+                    ActionClient.getClient().setDateBirth(checkText(textDateBirth));
+                    ActionClient.getClient().setEmail(checkText(textEmail));
+                    ActionClient.getClient().setInfoClient(checkText(textInfoClient));
+                    ClientDataBase.editClientDateBase(ActionClient.getClient());
                     new DialogStageCustom(textInfoClient, "Успешное сохранение данных");
                     labelSaveEdit.setOpacity(1);
-                    LOG.info("Редактор клиента: " + clientClassActive.toString());
+                    LOG.info("Редактор клиента: " + ActionClient.getClient().toString());
 //                bot.sendMsgStart("Добавление нового клиента: " + clientNew.toString ());
                     clearText(textFirtsName);
                     clearText(textLastName);
@@ -224,7 +222,7 @@ public class GUIMainController {
                     clearText(textEmail);
                     clearText(textInfoClient);
                     vBOXEditClient.setOpacity(0.3);
-                    textFieldFind.setText(clientClassActive.toStringIteam());
+                    textFieldFind.setText(ActionClient.getClient().toStringIteam());
                     methodFindClientDataBase ();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -291,7 +289,7 @@ public class GUIMainController {
 //    Метод поиска клиента
     public void methodFindClientDataBase (){
 
-        clientClassActive = null;
+        ActionClient.setClient(null) ;
         actionEditClientData = false;
         textFieldEdit(false,
                 textInfoClient,
@@ -398,8 +396,8 @@ public class GUIMainController {
                 items[j].setOnAction (new EventHandler<ActionEvent> () {
                     @Override
                     public void handle (ActionEvent event){
-                        clientClassActive = clientClassListFind.get (finalJ);
-                        rutFindClient(clientClassActive);
+                        ActionClient.setClient(clientClassListFind.get (finalJ));
+                        rutFindClient(ActionClient.getClient());
                         findAction = false;
                     }
                 });
@@ -492,9 +490,9 @@ public class GUIMainController {
 //    Метод улаляет клиента
     public void methodDelClient (ActionEvent actionEvent){
 
-        if (clientClassActive != null){
-            ClientDataBase.delClient(clientClassActive);
-            clientClassActive = null;
+        if (ActionClient.getClient() != null){
+            ClientDataBase.delClient(ActionClient.getClient());
+            ActionClient.setClient(null) ;
             clearTextFields(
                     textFirtsName,
                     textLastName,
@@ -549,7 +547,7 @@ public class GUIMainController {
 
 //    Доступ к редактору клиента
     public void methodEditDateClient (ActionEvent actionEvent){
-        if (clientClassActive != null){
+        if (ActionClient.getClient() != null){
             actionEditClientData = true;
         setVisibleEndManaged(true, btnSaveEdit, ButtonCancelEditDateClient);
         setVisibleEndManaged(false, ButtonEditDateClient, ButtonDelClient);
@@ -587,7 +585,8 @@ public class GUIMainController {
 //    Доступ для добавления нового клиента
     public void openEditVboxNewClient (ActionEvent actionEvent){
 
-        clientClassActive = null;
+        ActionClient.setClient(null);
+        
         clearTextFields(
                 textFirtsName,
                 textLastName,
@@ -633,7 +632,7 @@ public class GUIMainController {
 
     //    Оформление услуги
     public void methodOrderService (ActionEvent actionEvent) {
-        if (clientClassActive != null) {
+        if (ActionClient.getClient() != null) {
             if (!actionEditClientData){
             setVisibleEndManaged(false, vBOXEditClient);
             setVisibleEndManaged(false, vBoxFindClient);
@@ -674,6 +673,24 @@ public class GUIMainController {
             methodFindClientDataBase();
         }
     }
-
-
+//
+//    private Transaction transactionEnd;
+//    public static List<Service> list = new ArrayList<>();
+//
+//    public void methodNewTransaction(ActionEvent actionEvent) {
+//        for (int i = 0; i < list.size(); i++) {
+//
+//            Transaction transaction = new Transaction(1,
+//                    list.get(i), ActionClient.getClient(),
+//                    new UserSpartak(111,"Roman", "log", 1234, true), 1);
+//            if (transactionEnd == null){
+//                transactionEnd = transaction;
+//            } else {
+//                transaction.balanceCalculation(transactionEnd);
+//            }
+//            System.out.println(transaction.toString());
+//        }
+//        list.clear();
+//        list = new ArrayList<>();
+//    }
 }

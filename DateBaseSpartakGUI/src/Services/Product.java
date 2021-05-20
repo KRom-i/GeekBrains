@@ -1,5 +1,8 @@
 package Services;
 
+import Cash.Transaction;
+import WorkDataBase.ActionClient;
+import WorkDataBase.UserSpartak;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -10,7 +13,7 @@ import javafx.scene.text.TextAlignment;
 
 import java.util.List;
 
-public class Product {
+public class Product extends Service{
 
     private int Type;
     private int numberGroup;
@@ -20,12 +23,14 @@ public class Product {
     private int balance;
     private HBox hBoxInfo;
     private HBox hBoxEdit;
+    private Service  service;
 
     public Product(String name,double cost, int balance, int numberGroup) {
         this.name = name;
         this.cost = cost;
         this.balance = balance;
         this.numberGroup = numberGroup;
+        this.service = this;
     }
 
     public int getNumberGroup() {
@@ -76,6 +81,9 @@ public class Product {
         this.cost = cost;
     }
 
+
+    private Transaction transactionEnd;
+
     public HBox getHBoxInfo() {
         if (this.hBoxInfo == null){
             hBoxInfo = new HBox();
@@ -92,8 +100,15 @@ public class Product {
         hBoxInfo.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (getBalance() <= 0){
-
+                if (getBalance() > 0){
+            Transaction transaction = new Transaction(1, service, ActionClient.getClient(),
+                    new UserSpartak(111,"Roman", "log", 1234, true), 1);
+            if (transactionEnd == null){
+                transactionEnd = transaction;
+            } else {
+                transaction.balanceCalculation(transactionEnd);
+            }
+            System.out.println(transaction.toString());
                 }
             }
         });
@@ -162,17 +177,42 @@ buttonDel.getStyleClass().add("del-button");
         buttonDel.setVisible(false);
         buttonDel.setManaged(false);
 
+        Label labelValNumberGroup = new Label(getNumberGroup() + "");
+        Label labelValName = new Label(getName()+ "");
+        Label labelValCost = new Label(getCost() + "");
+//        Label labelValNUmberVisits = new Label(getNumberVisits() + "");
+        Label labelValBalance = new Label(getBalance() + "");
+
         hBoxEdit.getChildren().add(labelNumberGroup);
         hBoxEdit.getChildren().add(textNumberGroup);
+        hBoxEdit.getChildren().add(labelValNumberGroup);
+        textNumberGroup.setVisible(false);
+        textNumberGroup.setManaged(false);
         hBoxEdit.getChildren().add(labelName);
         hBoxEdit.getChildren().add(textFieldName);
+        hBoxEdit.getChildren().add(labelValName);
+        textFieldName.setVisible(false);
+        textFieldName.setManaged(false);
         hBoxEdit.getChildren().add(labelCost);
         hBoxEdit.getChildren().add(textFieldCost);
+        hBoxEdit.getChildren().add(labelValCost);
+        textFieldCost.setVisible(false);
+        textFieldCost.setManaged(false);
+//        hBoxEdit.getChildren().add(labelNumberVisits);
+//        hBoxEdit.getChildren().add(textFieldNumberVisits);
+//        hBoxEdit.getChildren().add(labelValNUmberVisits);
+//        textFieldNumberVisits.setVisible(false);
+//        textFieldNumberVisits.setManaged(false);
         hBoxEdit.getChildren().add(labelBalance);
         hBoxEdit.getChildren().add(textFieldBalance);
+        textFieldBalance.setVisible(false);
+        textFieldBalance.setManaged(false);
+        hBoxEdit.getChildren().add(labelValBalance);
+        labelValBalance.setMinWidth(50);
         hBoxEdit.getChildren().add(labelAddBalance);
         hBoxEdit.getChildren().add(spinnerCost);
-        hBoxEdit.setOpacity(0.7);
+
+        //    hBoxEdit.setOpacity(0.7);
 
         HBox hBoxMain = new HBox(hBoxEdit);
         hBoxMain.setSpacing(5);
@@ -180,14 +220,14 @@ buttonDel.getStyleClass().add("del-button");
         hBoxMain.getChildren().add(buttonSave);
         hBoxMain.getChildren().add(buttonDel);
 
-
         buttonEdit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                hBoxEdit.setOpacity(1);
+                //    hBoxEdit.setOpacity(1);
                 textNumberGroup.setEditable(true);
                 textFieldCost.setEditable(true);
                 textFieldName.setEditable(true);
+//                textFieldNumberVisits.setEditable(true);
                 labelAddBalance.setVisible(true);
                 labelAddBalance.setManaged(true);
                 spinnerCost.setEditable(true);
@@ -199,16 +239,38 @@ buttonDel.getStyleClass().add("del-button");
                 buttonSave.setManaged(true);
                 buttonDel.setVisible(true);
                 buttonDel.setManaged(true);
+                labelValNumberGroup.setVisible(false);
+                labelValName.setVisible(false);
+                labelValCost.setVisible(false);
+//                labelValNUmberVisits.setVisible(false);
+                labelValBalance.setVisible(false);
+                labelValNumberGroup.setManaged(false);
+                labelValName.setManaged(false);
+                labelValCost.setManaged(false);
+//                labelValNUmberVisits.setManaged(false);
+                labelValBalance.setManaged(false);
+                textFieldBalance.setManaged(true);
+                textFieldBalance.setVisible(true);
+                textFieldCost.setManaged(true);
+                textFieldCost.setVisible(true);
+                textFieldName.setManaged(true);
+                textFieldName.setVisible(true);
+                textNumberGroup.setManaged(true);
+                textNumberGroup.setVisible(true);
+//                textFieldNumberVisits.setManaged(true);
+//                textFieldNumberVisits.setVisible(true);
+
             }
         });
 
         buttonSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                hBoxEdit.setOpacity(0.7);
+                //    hBoxEdit.setOpacity(0.7);
                 textNumberGroup.setEditable(false);
                 textFieldCost.setEditable(false);
                 textFieldName.setEditable(false);
+//                textFieldNumberVisits.setEditable(false);
                 labelAddBalance.setVisible(false);
                 labelAddBalance.setManaged(false);
                 spinnerCost.setEditable(false);
@@ -220,11 +282,34 @@ buttonDel.getStyleClass().add("del-button");
                 buttonSave.setManaged(false);
                 buttonDel.setVisible(false);
                 buttonDel.setManaged(false);
+
+                labelValNumberGroup.setVisible(true);
+                labelValName.setVisible(true);
+                labelValCost.setVisible(true);
+//                labelValNUmberVisits.setVisible(true);
+                labelValBalance.setVisible(true);
+                labelValNumberGroup.setManaged(true);
+                labelValName.setManaged(true);
+                labelValCost.setManaged(true);
+//                labelValNUmberVisits.setManaged(true);
+                labelValBalance.setManaged(true);
+
+                textFieldBalance.setManaged(false);
+                textFieldBalance.setVisible(false);
+                textFieldCost.setManaged(false);
+                textFieldCost.setVisible(false);
+                textFieldName.setManaged(false);
+                textFieldName.setVisible(false);
+                textNumberGroup.setManaged(false);
+                textNumberGroup.setVisible(false);
+//                textFieldNumberVisits.setManaged(false);
+//                textFieldNumberVisits.setVisible(false);
             }
         });
 
         if (getBalance() <= 0){
             textFieldBalance.setStyle("-fx-background-color: #FF6347");
+            labelValBalance.setStyle("-fx-text-fill: #FF6347");
         }
         return hBoxMain;
     }

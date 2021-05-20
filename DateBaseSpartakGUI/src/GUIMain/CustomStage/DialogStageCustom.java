@@ -1,4 +1,4 @@
-package GUIMain;
+package GUIMain.CustomStage;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class DialogStageCustom {
+
 
 
     public DialogStageCustom (Node node, String textInfo){

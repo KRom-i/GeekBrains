@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
-public class ClubCard {
+public class ClubCard extends Service {
 
     private int Type;
     private int numberGroup;
