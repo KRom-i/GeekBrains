@@ -1,7 +1,14 @@
 package Services;
 
+import Cash.CashBook;
+import Cash.Transaction;
+import GUIMain.CustomStage.DialogSelectPaymentMethod;
+import GUIMain.CustomStage.ErrorStage;
 import Logger.LOG;
 import MySQLDB.ServerMySQL;
+import WorkDataBase.ActionClient;
+import WorkDataBase.ActionUser;
+import WorkDataBase.UserSpartak;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,12 +32,24 @@ public class CoachServices extends Service{
     private int numberVisits;
     private HBox hBoxInfo;
     private HBox hBoxEdit;
+    private int NumberClients;
+    private Service  service;
 
-    public CoachServices(String name,double cost, int numberVisits, int numberGroup) {
+
+    public CoachServices(String name, double cost, int numberVisits, int numberGroup) {
         this.name = name;
         this.cost = cost;
         this.numberGroup = numberGroup;
         this.numberVisits = numberVisits;
+        this.service = this;
+    }
+
+    public int getNumberClients() {
+        return NumberClients;
+    }
+
+    public void setNumberClients(int numberClients) {
+        NumberClients = numberClients;
     }
 
     public int getNumberGroup() {
@@ -95,7 +114,17 @@ public class CoachServices extends Service{
         if (this.hBoxInfo == null){
             hBoxInfo = new HBox();
         }
-        Label labelName = new Label(getName());
+//        Button buttonUp = new Button ("Оформить");
+//        buttonUp.setOnAction (new EventHandler<ActionEvent> () {
+//            @Override
+//            public void handle(ActionEvent event) {
+//                Transaction t1 = new Transaction (1, service, ActionClient.getClient (),
+//                        new UserSpartak (1, "Roman", "log", 1234, true), 1);
+//                CashBook.addTransactionToCashBook (t1);
+//            }
+//        });
+//        hBoxInfo.getChildren().add(buttonUp);
+        Label labelName = new Label(" " + getName());
         labelName.setMinWidth(200);
         Label labelCost = new Label("Цена (руб):  " + getCost());
         labelCost.setMinWidth(150);
@@ -110,9 +139,9 @@ public class CoachServices extends Service{
         hBoxInfo.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-//                if (getBalance() <= 0){
-//
-//                }
+                if (mouseEvent.getClickCount() == 2){
+                    new DialogSelectPaymentMethod (hBoxInfo , service, ActionUser.getUser (),ActionClient.getClient ());
+                }
             }
         });
 //        if (getBalance() <= 0){

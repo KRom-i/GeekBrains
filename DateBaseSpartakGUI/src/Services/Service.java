@@ -7,6 +7,42 @@ public abstract class Service {
     private int id;
     private String name;
     private double cost;
+    private int balance;
+    private int NumberClients;
+    private int termDays;
+    private int numberVisits;
+
+    public int getNumberClients() {
+        return NumberClients;
+    }
+
+    public void setNumberClients(int numberClients) {
+        NumberClients = numberClients;
+    }
+
+    public int getTermDays() {
+        return termDays;
+    }
+
+    public void setTermDays(int termDays) {
+        this.termDays = termDays;
+    }
+
+    public int getNumberVisits() {
+        return numberVisits;
+    }
+
+    public void setNumberVisits(int numberVisits) {
+        this.numberVisits = numberVisits;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
+    }
 
     public int getType() {
         return Type;

@@ -1,5 +1,7 @@
 package Bot;
 
+import GUIMain.CustomStage.SystemErrorStage;
+import Logger.LOG;
 import WorkDataBase.ClientClass;
 import WorkDataBase.ClientDataBase;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
@@ -51,6 +53,7 @@ public class BotTelegram extends TelegramLongPollingBot {
             sendPhoto (sendPhoto);
         } catch (TelegramApiException e) {
             e.printStackTrace ();
+new SystemErrorStage (e);
         }
     }
 
@@ -66,6 +69,7 @@ public class BotTelegram extends TelegramLongPollingBot {
             sendDocument (sendDocument);
         } catch (TelegramApiException e) {
             e.printStackTrace ();
+new SystemErrorStage (e);
         }
     }
 
@@ -98,36 +102,48 @@ public class BotTelegram extends TelegramLongPollingBot {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
 
-            switch (message.getText()) {
-                case "ВЫКЛЮЧИТЬ КОМПЬЮТЕР":
-                    sendMsg(message, "ОК! Выключа....");
-                    break;
-                case "Привет":
-                    sendMsg(message, "Привет, я Lenovo!");
-                    break;
-                case "/cmd":
-                    sendMsg(message, "Комманда!");
-                    break;
-                case "/cmd admin":
-                    sendMsg(message, "Привет, Админ!");
-                    break;
-                case "/clients":
-                    List<ClientClass> clientClasses = ClientDataBase.newListClient ();
-                    String msg = "";
-                    for(int c = 0; c < clientClasses.size (); c++) {
-                        msg += clientClasses.get (c).toString () + "\n";
+            LOG.info  ("Сообщение от клиента: " + message.getText());
+            if (message.getText().startsWith ("/clientId")){
+
+                String[] s = message.getText().split (" ");
+                int id = Integer.valueOf (s[1]);
+                LOG.info  ("Начало поиска клиента по ID: " + id);
+
+                List<ClientClass> client = ClientDataBase.newListClient ();
+                for(int c = 0; c < client.size (); c++) {
+                    LOG.info  ("Клиент: " + client.get (c).toStringIteam () + " ID: " + client.get (c).getId ());
+                    if (id == client.get (c).getId ()){
+                        sendMsg(message, client.get (c).toStringIteam ());
                     }
-                    sendMsg(message, msg);
-                    break;
-                case "/doc":
-                    sendDoc(message);
-                    break;
-                case "/photo":
-                    sendPhoto (message);
-                    break;
-                default:
-                    sendMsg(message, "Необходимо выбрать комманду");
+                }
             }
+
+
+//            switch (message.getText()) {
+//                case "ВЫКЛЮЧИТЬ КОМПЬЮТЕР":
+//                    sendMsg(message, "ОК! Выключа....");
+//                    break;
+//                case "Привет":
+//                    sendMsg(message, "Привет, я Lenovo!");
+//                    break;
+//                case "/cmd":
+//                    sendMsg(message, "Комманда!");
+//                    break;
+//                case "/cmd admin":
+//                    sendMsg(message, "Привет, Админ!");
+//                    break;
+//                case "/clients":
+//
+//                    break;
+//                case "/doc":
+//                    sendDoc(message);
+//                    break;
+//                case "/photo":
+//                    sendPhoto (message);
+//                    break;
+//                default:
+//                    sendMsg(message, "Необходимо выбрать комманду");
+//            }
 
         }
 

@@ -1,5 +1,9 @@
 package WorkDataBase;
 
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -178,5 +182,48 @@ public class ClientClass {
         return String.format ("%s %s %s", lastName, firstName, patronymicName);
 
     }
+
+    public String toStringInfo (){
+
+        return String.format ("ID[%s] ФИО[%s %s %s] Дата рождения[%s]", getId (), lastName, firstName, patronymicName, getDateBirth ());
+
+    }
+
+    public HBox infoHBox(){
+        Label labelID = new Label ("ID: ");
+        TextField textFieldID = new TextField (getId () + "");
+        textFieldID.setMinWidth (60);
+        textFieldID.setMaxWidth (60);
+        textFieldID.setEditable (false);
+
+        Label labelName = new Label ("ФИО: ");
+        TextField textFieldName= new TextField (toStringIteam ());
+        textFieldName.setMinWidth (300);
+        textFieldName.setEditable (false);
+
+        Label labelBirthDay= new Label ("Дата рождения: ");
+        TextField textFieldBirthDay= new TextField (getDateBirth ());
+        textFieldBirthDay.setMinWidth (100);
+        textFieldBirthDay.setMaxWidth (100);
+        textFieldBirthDay.setEditable (false);
+
+
+        Label labelTel= new Label ("Телефон: ");
+        TextField textFieldTel= new TextField (getTelephone ());
+        textFieldTel.setMinWidth (150);
+        textFieldTel.setMaxWidth (150);
+        textFieldTel.setEditable (false);
+
+        HBox hBox = new HBox ();
+        hBox.setAlignment (Pos.CENTER_LEFT);
+        hBox.setSpacing (5);
+        hBox.getChildren ().addAll (labelID, textFieldID,
+                labelName,textFieldName,
+                labelBirthDay , textFieldBirthDay,
+                labelTel, textFieldTel);
+
+        return hBox;
+    }
+
 
 }

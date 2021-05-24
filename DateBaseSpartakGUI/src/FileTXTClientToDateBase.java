@@ -1,3 +1,5 @@
+import GUIMain.CustomStage.SystemErrorStage;
+import Logger.LOG;
 import MySQLDB.ServerMySQL;
 import WorkDataBase.ClientClass;
 
@@ -74,12 +76,14 @@ public class FileTXTClientToDateBase {
                 }
 
 
-                System.out.println(clientClass.toString());
+                LOG.info (clientClass.toString());
             }
 
 
         } catch (Exception e){
-            e.printStackTrace ();
+           e.printStackTrace ();
+           new SystemErrorStage (e);
+
         } finally {
 
             ServerMySQL.disconnect();

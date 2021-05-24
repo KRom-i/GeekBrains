@@ -1,5 +1,6 @@
 package GUIMain.CustomStage;
 
+import Logger.LOG;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -87,7 +88,7 @@ public class DialogStageCustom {
         for(Object o: objects
         ) {
 
-            System.out.printf("%s %s \n", o.getClass().getName(), o.toString());
+            LOG.info (String.format("%s %s \n", o.getClass().getName(), o.toString()));
         }
     }
 

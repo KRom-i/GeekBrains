@@ -1,9 +1,17 @@
 package Services;
 
+import Cash.CashBook;
+import Cash.Transaction;
+import GUIMain.CustomStage.DialogSelectPaymentMethod;
+import GUIMain.CustomStage.ErrorStage;
+import WorkDataBase.ActionClient;
+import WorkDataBase.ActionUser;
+import WorkDataBase.UserSpartak;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
 public class OneTimeService extends Service {
@@ -15,12 +23,13 @@ public class OneTimeService extends Service {
     private double cost;
     private HBox hBoxInfo;
     private HBox hBoxEdit;
+    private Service  service;
 
     public OneTimeService(String name,double cost, int numberGroup) {
         Name = name;
         this.cost = cost;
         this.numberGroup = numberGroup;
-
+        this.service = this;
     }
 
     public int getNumberGroup() {
@@ -67,12 +76,30 @@ public class OneTimeService extends Service {
         if (this.hBoxInfo == null){
             hBoxInfo = new HBox();
         }
-        Label labelName = new Label(getName());
+//        Button buttonUp = new Button ("Оформить");
+//        buttonUp.setOnAction (new EventHandler<ActionEvent> () {
+//            @Override
+//            public void handle(ActionEvent event) {
+//                Transaction t1 = new Transaction (1, service, ActionClient.getClient (),
+//                        new UserSpartak (1, "Roman", "log", 1234, true), 1);
+//                CashBook.addTransactionToCashBook (t1);
+//            }
+//        });
+//        hBoxInfo.getChildren().add(buttonUp);
+        Label labelName = new Label(" " + getName());
         labelName.setMinWidth(200);
         Label labelCost = new Label("Цена (руб):  "+ getCost());
         labelCost.setMinWidth(150);
         hBoxInfo.getChildren().add(labelName);
         hBoxInfo.getChildren().add(labelCost);
+        hBoxInfo.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() == 2){
+                    new DialogSelectPaymentMethod (hBoxInfo , service, ActionUser.getUser (),ActionClient.getClient ());
+                }
+            }
+        });
         return hBoxInfo;
     }
 

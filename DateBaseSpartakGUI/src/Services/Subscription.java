@@ -1,5 +1,12 @@
 package Services;
 
+import Cash.CashBook;
+import Cash.Transaction;
+import GUIMain.CustomStage.DialogSelectPaymentMethod;
+import GUIMain.CustomStage.ErrorStage;
+import WorkDataBase.ActionClient;
+import WorkDataBase.ActionUser;
+import WorkDataBase.UserSpartak;
 import com.sun.deploy.xml.XMLable;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -20,6 +27,7 @@ public class Subscription extends Service{
     private int numberVisits;
     private HBox hBoxInfo;
     private HBox hBoxEdit;
+    private Service  service;
 
     public Subscription(String name,double cost, int balance, int numberVisits, int numberGroup) {
         this.name = name;
@@ -27,6 +35,7 @@ public class Subscription extends Service{
         this.balance = balance;
         this.numberVisits = numberVisits;
         this.numberGroup = numberGroup;
+        this.service = this;
     }
 
     public int getNumberGroup() {
@@ -86,12 +95,21 @@ public class Subscription extends Service{
     }
 
 
-
     public HBox getHBoxInfo() {
         if (this.hBoxInfo == null){
             hBoxInfo = new HBox();
         }
-        Label labelName = new Label(getName());
+//        Button buttonUp = new Button ("Оформить");
+//        buttonUp.setOnAction (new EventHandler<ActionEvent> () {
+//            @Override
+//            public void handle(ActionEvent event) {
+//                Transaction t1 = new Transaction (1, service, ActionClient.getClient (),
+//                        new UserSpartak (1, "Roman", "log", 1234, true), 1);
+//                CashBook.addTransactionToCashBook (t1);
+//            }
+//        });
+//        hBoxInfo.getChildren().add(buttonUp);
+        Label labelName = new Label(" " + getName());
         labelName.setMinWidth(200);
         Label labelCost = new Label("Цена (руб):  " + getCost());
         labelCost.setMinWidth(150);
@@ -106,8 +124,12 @@ public class Subscription extends Service{
         hBoxInfo.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (getBalance() <= 0){
-
+                if (mouseEvent.getClickCount() == 2) {
+                    if (getBalance () > 0) {
+                        new DialogSelectPaymentMethod (hBoxInfo, service, ActionUser.getUser (), ActionClient.getClient ());
+                    } else {
+                        new ErrorStage (String.format ("%s.\nОтстаток %s.", service.getName (), getBalance () + ""));
+                    }
                 }
             }
         });
@@ -116,6 +138,7 @@ public class Subscription extends Service{
         }
         return hBoxInfo;
     }
+
 
     public HBox getHBoxEdit() {
         hBoxEdit = new HBox();

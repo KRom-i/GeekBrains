@@ -1,1 +1,5 @@
-127.0.0.1:3306
+::Connect DateBase::
+LOCAL=127.0.0.1
+PORT=3306
+USER_LOG=root
+PASS=limit2301

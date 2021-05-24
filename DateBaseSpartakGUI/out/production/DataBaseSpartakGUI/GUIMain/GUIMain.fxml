@@ -1,97 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
 <!--    8.0.171-->
 
-<VBox maxHeight="Infinity" maxWidth="Infinity" spacing="10" styleClass="my-Box-class" stylesheets="@Styles/style.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUIMain.GUIMainController">
-   <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
+<VBox maxHeight="Infinity" maxWidth="Infinity" minHeight="760" minWidth="1024" spacing="10" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUIMain.GUIMainController">
+    <MenuBar HBox.hgrow="ALWAYS">
+        <menus>
+            <Menu mnemonicParsing="false" text="Файл">
+                <items>
+                    <MenuItem mnemonicParsing="false" onAction="#methodAddNewUser" text="Добавить пользователя" />
+                </items>
+                <items>
+                    <MenuItem mnemonicParsing="false" onAction="#restart" text="Рестарт приложения" />
+                </items>
+                <items>
+                    <MenuItem mnemonicParsing="false" onAction="#systemClose" text="Выход" />
+                </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Настройки">
+                <items>
+                    <MenuItem mnemonicParsing="false" onAction="#addConfigDate" text="Установить дату и время" />
+                </items>
+                <items>
+                    <MenuItem mnemonicParsing="false" onAction="#initCashBookNull" text="Обнулить кассовую книгу" />
+                </items>
+                <items>
+                    <MenuItem mnemonicParsing="false" text="Config connect date base" />
+                </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Info">
+                <items>
+                    <MenuItem mnemonicParsing="false" text="Info" />
+                </items>
+            </Menu>
+        </menus>
+    </MenuBar>
+    <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
       <items>
-      <!--    <HBox>-->
-      <!--    <MenuBar HBox.hgrow="ALWAYS">-->
-      <!--     <menus>-->
-      <!--       <Menu mnemonicParsing="false" text="File">-->
-      <!--         <items>-->
-      <!--           <MenuItem mnemonicParsing="false" text="Close" />-->
-      <!--         </items>-->
-      <!--       </Menu>-->
-      <!--       <Menu mnemonicParsing="false" text="Edit">-->
-      <!--         <items>-->
-      <!--           <MenuItem mnemonicParsing="false" text="Delete" />-->
-      <!--         </items>-->
-      <!--       </Menu>-->
-      <!--       <Menu mnemonicParsing="false" text="Help">-->
-      <!--         <items>-->
-      <!--           <MenuItem mnemonicParsing="false" text="About" />-->
-      <!--         </items>-->
-      <!--       </Menu>-->
-      <!--     </menus>-->
-      <!--   </MenuBar>-->
-      <!--    </HBox>-->
-      
+
           <HBox alignment="TOP_CENTER" maxWidth="Infinity">
          <TabPane tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
            <tabs>
              <Tab text="КЛИЕНТ">
                <content>
                    <HBox fx:id="hBoxWorkClient" alignment="TOP_CENTER" maxWidth="Infinity" spacing="10" VBox.vgrow="ALWAYS">
-                               <VBox fx:id="vBoxFindClient" alignment="TOP_RIGHT" minHeight="0.0" minWidth="0.0" spacing="10" VBox.vgrow="ALWAYS">
-                                   <HBox fx:id="hBoxFindClient" spacing="10" HBox.hgrow="ALWAYS">
-                                       <VBox alignment="TOP_RIGHT" spacing="10" VBox.vgrow="ALWAYS">
-                                       <TextField fx:id="textFieldFind" focusTraversable="false" maxWidth="500" minHeight="60" minWidth="500" onAction="#methodFindClientDataBase" onKeyPressed="#methodFindClientDataBase" onMouseClicked="#methodFindClientDataBase" promptText="Ввод данных для поиска">
-                                       <VBox.margin>
+                               <VBox fx:id="vBoxFindClient" alignment="TOP_CENTER" minHeight="0.0" minWidth="0.0" spacing="10" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+
+                                   <HBox fx:id="hBoxFindClient" alignment="CENTER" spacing="10" HBox.hgrow="ALWAYS">
+                                       <TextField fx:id="textFieldFind" focusTraversable="false" maxWidth="639" minHeight="80" minWidth="639" onAction="#methodFindClientDataBase" onKeyPressed="#methodFindClientDataBase" onMouseClicked="#methodFindClientDataBase" promptText="Ввод данных для поиска">
+                                           <VBox.margin>
                                           <Insets bottom="20.0" top="20.0" />
                                        </VBox.margin>
                                     </TextField>
-                                           <VBox fx:id="vBOXEditClient" alignment="TOP_RIGHT" opacity="0.3" spacing="10" VBox.vgrow="ALWAYS">
-                                               <TextField fx:id="textFirtsName" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Фамилия" />
-                                               <TextField fx:id="textLastName" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Имя" />
-                                               <TextField fx:id="textPatronymicName" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Отчество" />
-                                               <TextField fx:id="textTelephone" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Номер телефона" />
-                                               <TextField fx:id="textDateBirth" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Дата роджения" />
-                                               <TextField fx:id="textEmail" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Email" />
-                                               <TextArea fx:id="textInfoClient" focusTraversable="false" maxHeight="200" maxWidth="500" minHeight="200" minWidth="500" promptText="Информация о клиента" />
-                                               <HBox alignment="CENTER_RIGHT" maxWidth="500" minHeight="40" minWidth="500" spacing="10">
-                                                   <Button fx:id="ButtonDelClient" focusTraversable="false" maxWidth="150" minHeight="40" minWidth="150" onAction="#methodDelClient" styleClass="del-button" stylesheets="@Styles/style.css" text="Удалить" />
-                                                   <Button fx:id="ButtonEditDateClient" focusTraversable="false" maxWidth="150" minHeight="40" minWidth="150" onAction="#methodEditDateClient" stylesheets="@Styles/style.css" text="Редактировать" />
-                                                   <Button fx:id="btnSaveEdit" focusTraversable="false" managed="false" maxWidth="150" minHeight="40" minWidth="150" onAction="#methodSaveEditClient" styleClass="save-button" stylesheets="@Styles/style.css" text="Сохранить" visible="false" />
-                                                   <Button fx:id="ButtonCancelEditDateClient" focusTraversable="false" managed="false" maxWidth="150" minHeight="40" minWidth="150" onAction="#methodCancelEditDateClient" stylesheets="@Styles/style.css" text="Отмена" visible="false" />
-                                               </HBox>
-                                       <opaqueInsets>
-                                          <Insets top="10.0" />
-                                       </opaqueInsets>
-                                           </VBox>
-                                           <ListView fx:id="listViewListClients" managed="false" onMouseClicked="#addFindClient" visible="false" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
-                                     </ListView>
-                                       </VBox>
-                                       <VBox alignment="TOP_RIGHT" spacing="10">
-                                       <Button fx:id="buttonFindClient" minHeight="60" minWidth="245" onAction="#methodFindClientDataBase" stylesheets="@Styles/style.css" text="Поиск">
-                                       <VBox.margin>
-                                          <Insets bottom="20.0" top="20.0" />
-                                       </VBox.margin>
-                                    </Button>
-                                       <Button fx:id="buttonGuest" minHeight="40" minWidth="245" stylesheets="@Styles/style.css" text="Гость" />
-                                       <Button fx:id="buttonNewClient" minHeight="40" minWidth="245" onAction="#openEditVboxNewClient" stylesheets="@Styles/style.css" text="Новый клиент" />
-                                       <Button fx:id="buttonListClients" minHeight="40" minWidth="245" onAction="#openListClients" stylesheets="@Styles/style.css" text="Список клиентов" />
-                                       <Button fx:id="buttonOrderService" focusTraversable="false" managed="false" minHeight="90" minWidth="245" onAction="#methodOrderService" styleClass="gold-button" stylesheets="@Styles/style.css" text="Оформить услугу" visible="false" />
-                                    <HBox.margin>
-                                       <Insets left="20.0" />
-                                    </HBox.margin>
-                                       </VBox>
+                                       <Button fx:id="buttonFindClient" minHeight="80" minWidth="206" onAction="#methodFindClientDataBase"  text="Поиск" />
+                                 <VBox.margin>
+                                    <Insets top="40.0" />
+                                 </VBox.margin>
+
+
+
+                                           <!--                                           <VBox fx:id="vBOXEditClient" alignment="TOP_RIGHT" opacity="0.3" spacing="10" VBox.vgrow="ALWAYS">-->
+<!--                                               <TextField fx:id="textFirtsName" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Фамилия" />-->
+<!--                                               <TextField fx:id="textLastName" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Имя" />-->
+<!--                                               <TextField fx:id="textPatronymicName" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Отчество" />-->
+<!--                                               <TextField fx:id="textTelephone" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Номер телефона" />-->
+<!--                                               <TextField fx:id="textDateBirth" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Дата роджения" />-->
+<!--                                               <TextField fx:id="textEmail" focusTraversable="false" maxWidth="500" minHeight="40" minWidth="500" promptText="Email" />-->
+<!--                                               <TextArea fx:id="textInfoClient" focusTraversable="false" maxHeight="200" maxWidth="500" minHeight="200" minWidth="500" promptText="Информация о клиента" />-->
+<!--                                               <HBox alignment="CENTER_RIGHT" maxWidth="500" minHeight="40" minWidth="500" spacing="10">-->
+<!--                                                   <Button fx:id="ButtonDelClient" focusTraversable="false" maxWidth="150" minHeight="40" minWidth="150" onAction="#methodDelClient" styleClass="del-button"  text="Удалить" />-->
+<!--                                                   <Button fx:id="ButtonEditDateClient" focusTraversable="false" maxWidth="150" minHeight="40" minWidth="150" onAction="#methodEditDateClient"  text="Редактировать" />-->
+<!--                                                   <Button fx:id="btnSaveEdit" focusTraversable="false" managed="false" maxWidth="150" minHeight="40" minWidth="150" onAction="#methodSaveEditClient" styleClass="save-button"  text="Сохранить" visible="false" />-->
+<!--                                                   <Button fx:id="ButtonCancelEditDateClient" focusTraversable="false" managed="false" maxWidth="150" minHeight="40" minWidth="150" onAction="#methodCancelEditDateClient"  text="Отмена" visible="false" />-->
+<!--                                               </HBox>-->
+<!--                                       <opaqueInsets>-->
+<!--                                          <Insets top="10.0" />-->
+<!--                                       </opaqueInsets>-->
+<!--                                           </VBox>-->
+
+
                                    </HBox>
+                                   <HBox alignment="TOP_CENTER" spacing="10">
+                                       <Button fx:id="buttonGuest" minHeight="40" minWidth="206"  text="Аноним" onAction="#payNullClient"/>
+                                       <Button fx:id="buttonNewClient" minHeight="40" minWidth="206" onAction="#openEditVboxNewClient"  text="Новый" />
+                                       <Button fx:id="buttonListClients" minHeight="40" minWidth="206" onAction="#openListClients"  text="Список" />
+                                       <Button fx:id="buttonListClientsAction" minHeight="40" minWidth="206" onAction="#openListClients"  text="Активные" />
+                                 <VBox.margin>
+                                    <Insets top="10.0"/>
+                                 </VBox.margin>
+                                   </HBox>
+                                   <ListView fx:id="listViewListClients" managed="false" maxHeight="Infinity" onMouseClicked="#addFindClient" visible="false" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                 <VBox.margin>
+                                    <Insets top="50.0" bottom="30.0" left="30.0" right="30.0" />
+                                 </VBox.margin></ListView>
                                </VBox>
-                              <VBox fx:id="vBoxOrderService" managed="false" spacing="10" visible="false" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
-                                  <Button maxWidth="150" minHeight="40" minWidth="150" onAction="#methodCancelOrderService" stylesheets="@Styles/style.css" text="Отмена" />
-                                  <VBox fx:id="vBoxChoiceService" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
+
+                              <VBox fx:id="vBoxOrderService" managed="false" spacing="30" visible="false" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                  <HBox spacing="10" HBox.hgrow="ALWAYS">
+                                  <Button maxWidth="150" minHeight="40" minWidth="150" onAction="#methodCancelOrderService"  text="Назад" />
+                                      <Button maxWidth="150" minHeight="40" minWidth="150"  text="Данные клиента" />
+                                      <Label minHeight="40" text="Клиент" textAlignment="CENTER" />
+                                      <TextField fx:id="textFieldNameClient" editable="false" maxWidth="250" minHeight="40" minWidth="250" />
+                                      <Label minHeight="40" text="Дата рождения" textAlignment="CENTER" />
+                                      <TextField fx:id="textFieldBirthDay" editable="false" maxWidth="150" minHeight="40" minWidth="150" />
+                                  </HBox>
+                                  <HBox>
+                                      <VBox fx:id="vBoxChoiceService" alignment="TOP_CENTER" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                          <Label text="Выбор услуги/товара" />
+                                      </VBox>
+                                      <VBox fx:id="vBoxActionService" alignment="TOP_CENTER" maxWidth="400" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                          <Label text="Дествующие абонементы клиента" />
+                                      </VBox>
+                                  </HBox>
                               <HBox.margin>
                                  <Insets top="20.0" />
                               </HBox.margin>
@@ -110,7 +133,45 @@
                </HBox.margin>
          </TabPane>
           </HBox>
-       <VBox fx:id="panelUserInterface" maxWidth="1.7976931348623157E308" minWidth="50.0" prefWidth="300.0" styleClass="panelUserInterface-VBox" />
+       <VBox fx:id="panelUserInterface" alignment="TOP_RIGHT" maxHeight="Infinity" maxWidth="350" minWidth="220.0" prefWidth="300.0" spacing="5.0" styleClass="panelUserInterface-VBox" VBox.vgrow="ALWAYS">
+            <children>
+                <VBox alignment="TOP_LEFT" maxWidth="220">
+                     <Label text="Дата и время входа">
+                  <VBox.margin>
+                     <Insets left="5.0" right="5.0" top="5.0" />
+                  </VBox.margin></Label>
+                     <TextField fx:id="textFieldDateTameStart" maxWidth="200">
+                  <VBox.margin>
+                     <Insets left="5.0" right="5.0" />
+                  </VBox.margin></TextField>
+                     <Label text="Имя пользователя">
+                  <VBox.margin>
+                     <Insets left="5.0" right="5.0" top="5.0" />
+                  </VBox.margin></Label>
+                     <TextField fx:id="textFieldNameUser" maxWidth="200">
+                  <VBox.margin>
+                     <Insets left="5.0" right="5.0" />
+                  </VBox.margin></TextField>
+                    <Button minHeight="40" minWidth="200" onAction="#methodEditUser" text="Сменить log/pas">
+                        <VBox.margin>
+                            <Insets left="5.0" right="5.0" top="5.0" />
+                        </VBox.margin></Button>
+                <Button minHeight="40" minWidth="200" onAction="#methodExitUser" text="Выход">
+                    <VBox.margin>
+                        <Insets left="5.0" right="5.0" top="5.0" />
+                    </VBox.margin></Button>
+                </VBox>
+                <VBox alignment="TOP_CENTER">
+                      <Label text="История операций за день">
+                  <VBox.margin>
+                     <Insets left="5.0" right="5.0" top="35.0" />
+                  </VBox.margin></Label>
+                </VBox>
+                <ListView fx:id="listViewHistoryTran" VBox.vgrow="ALWAYS">
+                  <VBox.margin>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </VBox.margin></ListView>
+            </children></VBox>
       </items>
    </SplitPane>
 </VBox>

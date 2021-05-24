@@ -9,9 +9,12 @@ import java.util.Scanner;
 
 public final class ServerMySQL {
 
-    public static Connection connection;
+    private static Connection connection;
     private static String LOCAL;
     private static String PORT;
+    private static String USER_LOG;
+    private static String PASS;
+    private static String URL;
 
     private ServerMySQL() {
     }
@@ -20,12 +23,32 @@ public final class ServerMySQL {
         try (FileReader fileReader = new FileReader(
                 new File("config.txt")
         )){
-            Scanner scanner = new Scanner(fileReader);
-            while (scanner.hasNextLine()){
-                String[] strings = scanner.nextLine().split(":");
-                LOCAL = strings[0];
-                PORT = strings[1];
+            Scanner s = new Scanner(fileReader);
+            while (s.hasNextLine()){
+
+                String str = s.nextLine();
+
+                if (str.startsWith ("LOCAL")){
+                    LOCAL = str.split("=")[1];
+                }
+
+                if (str.startsWith ("PORT")){
+                    PORT = str.split("=")[1];
+                }
+
+                if (str.startsWith ("USER_LOG")){
+                    USER_LOG = str.split("=")[1];
+                }
+
+                if (str.startsWith ("PASS")){
+                    PASS = str.split("=")[1];
+                }
+
+
             }
+
+            LOG.info (String.format("Config connect DateBase: LOCAL[%s] PORT[%s] USER_LOG[%s] PASS[%s]" +
+                    " \n", LOCAL,PORT,USER_LOG,PASS));
 
         }catch (Exception e){
             e.printStackTrace();
@@ -34,14 +57,12 @@ public final class ServerMySQL {
 
     public static Connection getConnection(){
 
-        if (LOCAL == null || PORT == null){
-            readConfig();
-        }
-
         if (connection == null){
+            readConfig();
             try {
+                URL = String.format ("jdbc:mysql://%s:%s/DateBaseSpartak", LOCAL,PORT );
                 connection = DriverManager.
-                        getConnection("jdbc:mysql://"+LOCAL+":"+PORT+"/DateBaseSpartak", "root", "limit2301");
+                        getConnection(URL, USER_LOG, PASS);
             } catch (SQLException e) {
                 LOG.error("Connection mysql", e);
                 e.printStackTrace();
@@ -60,6 +81,20 @@ public final class ServerMySQL {
         }
     }
 
+    public static void statementClose(Statement statement){
+        try {
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public static void resultSetClose(ResultSet resultSet){
+        try {
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

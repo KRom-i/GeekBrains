@@ -1,7 +1,11 @@
 package Services;
 
+import Cash.CashBook;
 import Cash.Transaction;
+import GUIMain.CustomStage.DialogSelectPaymentMethod;
+import GUIMain.CustomStage.ErrorStage;
 import WorkDataBase.ActionClient;
+import WorkDataBase.ActionUser;
 import WorkDataBase.UserSpartak;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -24,6 +28,7 @@ public class Product extends Service{
     private HBox hBoxInfo;
     private HBox hBoxEdit;
     private Service  service;
+
 
     public Product(String name,double cost, int balance, int numberGroup) {
         this.name = name;
@@ -82,13 +87,23 @@ public class Product extends Service{
     }
 
 
-    private Transaction transactionEnd;
+
 
     public HBox getHBoxInfo() {
         if (this.hBoxInfo == null){
             hBoxInfo = new HBox();
         }
-        Label labelName = new Label(getName());
+//        Button buttonUp = new Button ("Оформить");
+//        buttonUp.setOnAction (new EventHandler<ActionEvent> () {
+//            @Override
+//            public void handle(ActionEvent event) {
+//                Transaction t1 = new Transaction (1, service, ActionClient.getClient (),
+//                        new UserSpartak (1, "Roman", "log", 1234, true), 1);
+//                CashBook.addTransactionToCashBook (t1);
+//            }
+//        });
+//        hBoxInfo.getChildren().add(buttonUp);
+        Label labelName = new Label(" " + getName());
         labelName.setMinWidth(200);
         Label labelCost = new Label("Цена (руб):  " + getCost());
         labelCost.setMinWidth(150);
@@ -97,19 +112,18 @@ public class Product extends Service{
         hBoxInfo.getChildren().add(labelName);
         hBoxInfo.getChildren().add(labelCost);
         hBoxInfo.getChildren().add(labelBalance);
+
         hBoxInfo.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (getBalance() > 0){
-            Transaction transaction = new Transaction(1, service, ActionClient.getClient(),
-                    new UserSpartak(111,"Roman", "log", 1234, true), 1);
-            if (transactionEnd == null){
-                transactionEnd = transaction;
-            } else {
-                transaction.balanceCalculation(transactionEnd);
-            }
-            System.out.println(transaction.toString());
+                if (mouseEvent.getClickCount() == 2) {
+                    if (getBalance () > 0) {
+                        new DialogSelectPaymentMethod (hBoxInfo, service, ActionUser.getUser (), ActionClient.getClient ());
+                    } else {
+                        new ErrorStage (String.format ("%s.\nОтстаток %s.", service.getName (), getBalance () + ""));
+                    }
                 }
+
             }
         });
         if (getBalance() <= 0){

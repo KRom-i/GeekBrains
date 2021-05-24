@@ -18,7 +18,7 @@ public class CharFormat {
         return null;
     }
 
-    public String utf8ToCp886Byte(String strUtf8){
+    public String utf8ToCp1251Byte(String strUtf8){
 
         try {
             return new String(strUtf8.getBytes(StandardCharsets.UTF_8), "CP1251");

@@ -7,6 +7,7 @@ public class UserSpartak {
     private String login;
     private int password;
     private boolean auth;
+    private String savePassword;
 
     private final String NAME_Class_DB = "User";
 
@@ -21,6 +22,16 @@ public class UserSpartak {
         this.password = password;
         this.auth = auth;
     }
+
+    public String getSavePassword () {
+        return savePassword;
+    }
+
+    public void setSavePassword (String savePassword) {
+        this.savePassword = savePassword;
+    }
+
+    public UserSpartak(){}
 
     public int getId() {
         return id;
@@ -60,5 +71,17 @@ public class UserSpartak {
 
     public void setAuth(boolean auth) {
         this.auth = auth;
+    }
+
+
+    @Override
+    public String toString() {
+        return "UserSpartak{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", login='" + login + '\'' +
+                ", password=" + password +
+                ", auth=" + auth +
+                '}';
     }
 }

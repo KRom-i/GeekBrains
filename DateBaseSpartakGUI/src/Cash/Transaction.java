@@ -40,6 +40,7 @@ public class Transaction {
     private boolean deleteTran;
 
 
+
     /*  Конструктор принимает id вида операции, id услуги/товара, id клиента,
         id пользователя, id способа расчета(Нал/Безнал/QR-код) */
     public Transaction(int idTransaction,Service service, ClientClass client, UserSpartak user, int idTypePayment){
@@ -52,10 +53,10 @@ public class Transaction {
         this.nameTransaction = new TransactionArray().getName(idTransaction);
 
         this.idService = service.getId();
-        this.nameService = null;
+        this.nameService = service.getName();
 
         this.idClient = client.getId();
-        this.nameClient = client.getInfoClient();
+        this.nameClient = client.toStringIteam();
 
         this.idUser = user.getId();
         this.nameUser = user.getName();
@@ -63,7 +64,7 @@ public class Transaction {
         this.idTypePayment = idTypePayment;
         this.nameTypePayment = new TypePaymentArray().getName(idTypePayment);
 
-        if (idTransaction == 1){
+        if (idTransaction == 1 || idTransaction == 2){
 
             if (idTypePayment == 1){
                 this.sumCashReceipt = service.getCost();
@@ -76,10 +77,31 @@ public class Transaction {
                 this.sumNonCashReceipt = service.getCost();
                 this.sumNonCashConsumption = 0;
             }
-
             this.deleteTran = false;
+
+        } else if (idTransaction == 3){
+
+            if (idTypePayment == 1){
+                this.sumCashReceipt = 0;
+                this.sumCashConsumption = service.getCost();
+                this.sumNonCashReceipt = 0;
+                this.sumNonCashConsumption = 0;
+            } else if (idTypePayment == 2 || idTypePayment == 3 ) {
+                this.sumCashReceipt = 0;
+                this.sumCashConsumption = 0;
+                this.sumNonCashReceipt = 0;
+                this.sumNonCashConsumption = service.getCost();
+            }
+            this.deleteTran = false;
+
         }
 
+
+
+    }
+
+//    Пустой конструктор
+    public Transaction(){
 
     }
 
@@ -273,12 +295,12 @@ public class Transaction {
         return deleteTran;
     }
 
-    public void setDeleteTran(boolean storno) {
+    public void setDeleteTran(boolean deleteTran) {
         this.deleteTran = deleteTran;
     }
 
     //    Метод округляет значение Double до 2x чисел после запятой.
-    private double round(double doubleValue){
+    public static double round(double doubleValue){
         int places = 2;
         BigDecimal db = new BigDecimal(Double.toString(doubleValue));
         db = db.setScale(places, RoundingMode.HALF_UP);

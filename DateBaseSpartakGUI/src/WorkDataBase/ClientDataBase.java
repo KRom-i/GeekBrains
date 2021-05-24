@@ -34,7 +34,7 @@ public static boolean editClientDateBase(ClientClass client){
 
     try {
 
-        statement = ServerMySQL.connection.prepareStatement(
+        statement = ServerMySQL.getConnection ().prepareStatement(
                 "UPDATE client_list SET " +
                         "FirstName = ?," +
                         " LastName = ?," +
@@ -78,7 +78,7 @@ public static boolean editClientDateBase(ClientClass client){
                     "id, FirstName, LastName, PatName, Telephone, DataBirth, Email, InfoClient, BOOL_DEL" +
                     ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
-            statement = ServerMySQL.connection.prepareStatement(query);
+            statement = ServerMySQL.getConnection ().prepareStatement(query);
 
             statement.setInt(1, client.getId());
             statement.setString(2, client.getFirstName());
@@ -109,7 +109,7 @@ public static void startNewID(String nameClass, int numberIP){
     try {
 
         String query = "INSERT INTO UP_ID (Class, Value_IP) VALUES (?, ?);";
-        statement = ServerMySQL.connection.prepareStatement(query);
+        statement = ServerMySQL.getConnection ().prepareStatement(query);
         statement.setString(1, nameClass);
         statement.setInt(2, numberIP);
         statement.executeUpdate();
@@ -131,7 +131,7 @@ public static void startNewID(String nameClass, int numberIP){
 
         try {
 
-            statement = ServerMySQL.connection.prepareStatement(
+            statement = ServerMySQL.getConnection ().prepareStatement(
                     "SELECT * FROM UP_ID WHERE Class = ?;"
             );
 
@@ -147,7 +147,7 @@ public static void startNewID(String nameClass, int numberIP){
                 resultSetClose(rs);
                 statementClose(statement);
 
-                statement = ServerMySQL.connection.prepareStatement(
+                statement = ServerMySQL.getConnection ().prepareStatement(
                         "UPDATE UP_ID SET Value_IP = ? WHERE class = ?;"
                 );
 
@@ -181,13 +181,13 @@ public static void startNewID(String nameClass, int numberIP){
 
         try {
 
-            statement = ServerMySQL.connection.prepareStatement(
+            statement = ServerMySQL.getConnection ().prepareStatement(
                     "SELECT * FROM client_list ORDER BY LastName ASC;"
             );
 //            statement.executeQuery();
 
 
-//            statement = ServerMySQL.connection.prepareStatement(
+//            statement = ServerMySQL.getConnection ().prepareStatement(
 //                    "SELECT * FROM client_list WHERE BOOL_DEL = ?;"
 //            );
 //
@@ -201,7 +201,6 @@ public static void startNewID(String nameClass, int numberIP){
                 if (!rs.getBoolean("BOOL_DEL")) {
 
                     ClientClass clientNew = new ClientClass();
-
                     clientNew.setId(rs.getInt("id"));
                     clientNew.setFirstName(rs.getString("FirstName"));
                     clientNew.setLastName(rs.getString("LastName"));
@@ -210,7 +209,6 @@ public static void startNewID(String nameClass, int numberIP){
                     clientNew.setDateBirth(rs.getString("DataBirth"));
                     clientNew.setEmail(rs.getString("Email"));
                     clientNew.setInfoClient(rs.getString("InfoClient"));
-
                     clientList.add(clientNew);
                 }
             }
@@ -238,13 +236,13 @@ public static void startNewID(String nameClass, int numberIP){
 
         try {
 
-            statement = ServerMySQL.connection.prepareStatement(
+            statement = ServerMySQL.getConnection ().prepareStatement(
                     "SELECT * FROM client_list ORDER BY LastName ASC;"
             );
             statement.executeQuery();
 
 
-            statement = ServerMySQL.connection.prepareStatement(
+            statement = ServerMySQL.getConnection ().prepareStatement(
                     "SELECT * FROM client_list WHERE BOOL_DEL = ?;"
             );
 
@@ -290,7 +288,7 @@ public static void startNewID(String nameClass, int numberIP){
         try {
 
 
-                statement = ServerMySQL.connection.prepareStatement(
+                statement = ServerMySQL.getConnection ().prepareStatement(
                         "UPDATE client_list SET BOOL_DEL = ? WHERE id = ?;"
                 );
 

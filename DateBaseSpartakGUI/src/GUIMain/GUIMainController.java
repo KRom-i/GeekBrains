@@ -1,14 +1,21 @@
 package GUIMain;
 
+
+import GUIMain.CustomStage.*;
 import Bot.BotTelegram;
+import Cash.CashBook;
+import Cash.NodeViewHistory;
 import Cash.Transaction;
-import GUIMain.CustomStage.DialogStageCustom;
-import GUIMain.CustomStage.LabelInfo;
+import Format.DateTime;
+import GUIMain.CustomStage.DialogDateInit;
 import Logger.LOG;
 import MySQLDB.ServerMySQL;
 import Services.ActionService;
 import Services.Service;
 import WorkDataBase.*;
+import WorkDataBase.AuthUser.DialogAuth;
+import WorkDataBase.User.DialogAddNewUser;
+import WorkDataBase.User.DialogUserEdit;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,7 +32,6 @@ import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import СustomTitlePanel.ChoiceTitlePanel;
 import СustomTitlePanel.EditServicesTitlePanel;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +41,17 @@ import java.util.concurrent.Executors;
 
 public class GUIMainController {
 
+
+    @FXML
+    private TextField textFieldBirthDay;
+    @FXML
+    private TextField textFieldNameClient;
+    @FXML
+    private ListView listViewHistoryTran;
+    @FXML
+    private TextField textFieldDateTameStart;
+    @FXML
+    private TextField textFieldNameUser;
     @FXML
     private VBox panelUserInterface;
     @FXML
@@ -50,7 +67,7 @@ public class GUIMainController {
     @FXML
     private  VBox vBoxChoiceService;
     @FXML
-    private ListView<String> listViewListClients;
+    private ListView<HBox> listViewListClients;
     @FXML
     private VBox vBoxOrderService;
     @FXML
@@ -84,25 +101,66 @@ public class GUIMainController {
     
     public void initialize() {
 
-        ServerMySQL.getConnection ();
+//        ServerMySQL.getConnection ();
         clientClassList = ClientDataBase.newListClient();
 
-        textFieldEdit(false,
-                textInfoClient,
-                textFirtsName,
-                textLastName,
-                textPatronymicName,
-                textTelephone,
-                textDateBirth,
-                textEmail);
+//        textFieldEdit(false,
+//                textInfoClient,
+//                textFirtsName,
+//                textLastName,
+//                textPatronymicName,
+//                textTelephone,
+//                textDateBirth,
+//                textEmail);
+
 
         new ChoiceTitlePanel(vBoxChoiceService, 5);
         new EditServicesTitlePanel(vBoxEditServices, 5);
 
         new LabelInfo(panelUserInterface);
 
+        methodAuth();
+
+        NodeViewHistory.init (listViewHistoryTran);
+
+        updateListClients();
+
+
 //        initBot ();
 
+    }
+
+//    Установка конфигураций для теста
+    @FXML
+    private void addConfigDate(){
+        Platform.runLater (()->{
+            new DialogDateInit (panelUserInterface);
+        });
+
+    }
+
+//    Мето для обновляет иторию кассовых операций за день
+
+//    public void methodNewHistoryTran(){
+//        Platform.runLater (()->{
+//            List<Transaction> t = CashBook.getListTranDay (new DateTime ().currentDate ());
+//            if (!t.isEmpty ()) {
+//                for (int i = 0; i < t.size (); i++) {
+//                    listViewGHistoryTransactionDay.getItems ().add(t.get (i).toString ());
+//                }
+//
+//            }
+//        });
+//    }
+
+
+//    Метод для авторизации
+    private void methodAuth(){
+        Platform.runLater (()->{
+            textFieldNameUser.setEditable (false);
+            textFieldDateTameStart.setEditable (false);
+            new DialogAuth (panelUserInterface, textFieldNameUser, textFieldDateTameStart);
+        });
     }
 
 
@@ -150,20 +208,16 @@ public class GUIMainController {
         } else {
             try {
                 ClientClass clientNew = new ClientClass();
-
                 clientNew.setId(ClientDataBase.idUpDateBase(clientNew.nameClassDataBase()));
-
                 clientNew.setFirstName(editText(textLastName.getText()));
                 clientNew.setLastName(editText(textFirtsName.getText()));
                 clientNew.setPatronymicName(editText(textPatronymicName.getText()));
-
                 clientNew.setTelephone(checkText(textTelephone));
                 clientNew.setDateBirth(checkText(textDateBirth));
                 clientNew.setEmail(checkText(textEmail));
                 clientNew.setInfoClient(checkText(textInfoClient));
                 ClientDataBase.addNewClientDateBase(clientNew);
-                new DialogStageCustom(textInfoClient, "Успешное сохранение данных");
-                labelSaveEdit.setOpacity(1);
+                new InfoStage ("Успешное сохранение данных");
                 LOG.info("Добавление нового клиента: " + clientNew.toString());
 //                bot.sendMsgStart("Добавление нового клиента: " + clientNew.toString ());
                 clearText(textFirtsName);
@@ -173,15 +227,13 @@ public class GUIMainController {
                 clearText(textDateBirth);
                 clearText(textEmail);
                 clearText(textInfoClient);
-                vBOXEditClient.setOpacity(0.3);
+//                vBOXEditClient.setOpacity(0.3);
                 textFieldFind.setText(clientNew.toStringIteam());
                 methodFindClientDataBase ();
             } catch (Exception e) {
                 e.printStackTrace();
                 LOG.error("Ошибка при добавление нового клиента", e);
-                labelSaveEdit.setStyle("-fx-text-fill: red;");
-                labelSaveEdit.setText("Ошибка при добавление нового клиента");
-                labelSaveEdit.setOpacity(1);
+
             }
 
             serviceTextClear.submit(() -> {
@@ -221,7 +273,7 @@ public class GUIMainController {
                     clearText(textDateBirth);
                     clearText(textEmail);
                     clearText(textInfoClient);
-                    vBOXEditClient.setOpacity(0.3);
+//                    vBOXEditClient.setOpacity(0.3);
                     textFieldFind.setText(ActionClient.getClient().toStringIteam());
                     methodFindClientDataBase ();
                 } catch (Exception e) {
@@ -291,26 +343,26 @@ public class GUIMainController {
 
         ActionClient.setClient(null) ;
         actionEditClientData = false;
-        textFieldEdit(false,
-                textInfoClient,
-                textFirtsName,
-                textLastName,
-                textPatronymicName,
-                textTelephone,
-                textDateBirth,
-                textEmail);
-        vBOXEditClient.setOpacity(0.3);
-        clearTextFields(
-                textFirtsName,
-                textLastName,
-                textPatronymicName,
-                textTelephone,
-                textDateBirth,
-                textEmail);
-        textInfoClient.clear();
-        setVisibleEndManaged(false, btnSaveEdit, ButtonCancelEditDateClient, buttonOrderService);
-        setVisibleEndManaged(true, ButtonEditDateClient, ButtonDelClient);
-        nodesOpacity(1, textFieldFind, buttonFindClient, buttonGuest, buttonListClients, buttonNewClient);
+//        textFieldEdit(false,
+//                textInfoClient,
+//                textFirtsName,
+//                textLastName,
+//                textPatronymicName,
+//                textTelephone,
+//                textDateBirth,
+//                textEmail);
+//        vBOXEditClient.setOpacity(0.3);
+//        clearTextFields(
+//                textFirtsName,
+//                textLastName,
+//                textPatronymicName,
+//                textTelephone,
+//                textDateBirth,
+//                textEmail);
+//        textInfoClient.clear();
+//        setVisibleEndManaged(false, btnSaveEdit, ButtonCancelEditDateClient, buttonOrderService);
+//        setVisibleEndManaged(true, ButtonEditDateClient, ButtonDelClient);
+//        nodesOpacity(1, textFieldFind, buttonFindClient, buttonGuest, buttonListClients, buttonNewClient);
         if (!findAction
                 && !textFieldFind.getText ().startsWith (" ")
                 && textFieldFind.getText ().length () > 1){
@@ -397,7 +449,8 @@ public class GUIMainController {
                     @Override
                     public void handle (ActionEvent event){
                         ActionClient.setClient(clientClassListFind.get (finalJ));
-                        rutFindClient(ActionClient.getClient());
+//                        rutFindClient(ActionClient.getClient());
+                        methodOrderService ();
                         findAction = false;
                     }
                 });
@@ -415,10 +468,10 @@ public class GUIMainController {
             double ww = w / 2;
             double hh = h / 2;
 
-            double nodeLength = (textFieldFind.getWidth() + buttonFindClient.getWidth()) / 2;
+            double nodeLength = (vBoxFindClient.getWidth()) / 2;
 
-            double xMenu = x + ww - nodeLength;
-            double yMenu = y + 180;
+            double xMenu = x + ww - nodeLength + 200;
+            double yMenu = y + 220;
 
             contextMenu.show (stage, xMenu,yMenu);
 //            argsPrint(x,y,w,h,ww,hh,xMenu,yMenu);
@@ -430,7 +483,7 @@ public class GUIMainController {
         for(Object o: objects
             ) {
 
-            System.out.printf("%s %s \n", o.getClass().getName(), o.toString());
+            LOG.info (String.format("%s %s \n", o.getClass().getName(), o.toString()));
         }
     }
 
@@ -438,32 +491,32 @@ public class GUIMainController {
 //    Выводим найденного клиента для дальнейшего взаимодействия
     private void rutFindClient(ClientClass clientClass){
 
-        textFieldFind.setText("");
-        actionEditClientData = false;
-        textLastName.setText(clientClass.getFirstName());
-        textFirtsName.setText(clientClass.getLastName());
-        textPatronymicName.setText(clientClass.getPatronymicName());
-        textTelephone.setText(clientClass.getTelephone());
-        textDateBirth.setText(clientClass.getDateBirth());
-        textEmail.setText(clientClass.getEmail());
-        textInfoClient.setText(clientClass.getInfoClient());
+//        textFieldFind.setText("");
+//        actionEditClientData = false;
+//        textLastName.setText(clientClass.getFirstName());
+//        textFirtsName.setText(clientClass.getLastName());
+//        textPatronymicName.setText(clientClass.getPatronymicName());
+//        textTelephone.setText(clientClass.getTelephone());
+//        textDateBirth.setText(clientClass.getDateBirth());
+//        textEmail.setText(clientClass.getEmail());
+//        textInfoClient.setText(clientClass.getInfoClient());
 
-        textFieldEdit(false,
-                textInfoClient,
-                textFirtsName,
-                textLastName,
-                textPatronymicName,
-                textTelephone,
-                textDateBirth,
-                textEmail);
-        setVisibleEndManaged(false, btnSaveEdit, ButtonCancelEditDateClient);
-        setVisibleEndManaged(true, ButtonEditDateClient, ButtonDelClient, buttonOrderService, vBOXEditClient);
-        vBOXEditClient.setOpacity(1);
-        setVisibleEndManaged(false, listViewListClients);
-        nodesOpacity(0.5, textFieldFind, buttonFindClient, buttonGuest, buttonListClients, buttonNewClient);
-        nodesOpacity(0.8, textFirtsName, textLastName, textPatronymicName, textTelephone, textDateBirth,
-                     textInfoClient, textEmail);
-        nodesOpacity(1, buttonOrderService);
+//        textFieldEdit(false,
+//                textInfoClient,
+//                textFirtsName,
+//                textLastName,
+//                textPatronymicName,
+//                textTelephone,
+//                textDateBirth,
+//                textEmail);
+//        setVisibleEndManaged(false, btnSaveEdit, ButtonCancelEditDateClient);
+//        setVisibleEndManaged(true, ButtonEditDateClient, ButtonDelClient, buttonOrderService);
+//        vBOXEditClient.setOpacity(1);
+//        setVisibleEndManaged(false, listViewListClients);
+//        nodesOpacity(0.5, textFieldFind, buttonFindClient, buttonGuest, buttonListClients, buttonNewClient);
+//        nodesOpacity(0.8, textFirtsName, textLastName, textPatronymicName, textTelephone, textDateBirth,
+//                     textInfoClient, textEmail);
+//        nodesOpacity(1, buttonOrderService);
 //        vBoxFindClient.setManaged(false);
 //        vBoxFindClient.setVisible(false);
     }
@@ -493,20 +546,20 @@ public class GUIMainController {
         if (ActionClient.getClient() != null){
             ClientDataBase.delClient(ActionClient.getClient());
             ActionClient.setClient(null) ;
-            clearTextFields(
-                    textFirtsName,
-                    textLastName,
-                    textPatronymicName,
-                    textTelephone,
-                    textDateBirth,
-                    textEmail);
-            textInfoClient.setText("");
-            clientClassList = ClientDataBase.newListClient();
-            vBOXEditClient.setOpacity(0.3);
+//            clearTextFields(
+//                    textFirtsName,
+//                    textLastName,
+//                    textPatronymicName,
+//                    textTelephone,
+//                    textDateBirth,
+//                    textEmail);
+//            textInfoClient.setText("");
+//            clientClassList = ClientDataBase.newListClient();
+//            vBOXEditClient.setOpacity(0.3);
         }
-        setVisibleEndManaged(false, btnSaveEdit, ButtonCancelEditDateClient);
-        setVisibleEndManaged(true, ButtonEditDateClient, ButtonDelClient);
-        setVisibleEndManaged(false, listViewListClients);
+//        setVisibleEndManaged(false, btnSaveEdit, ButtonCancelEditDateClient);
+//        setVisibleEndManaged(true, ButtonEditDateClient, ButtonDelClient);
+//        setVisibleEndManaged(false, listViewListClients);
         methodFindClientDataBase();
 
     }
@@ -587,41 +640,41 @@ public class GUIMainController {
 
         ActionClient.setClient(null);
         
-        clearTextFields(
-                textFirtsName,
-                textLastName,
-                textPatronymicName,
-                textTelephone,
-                textDateBirth,
-                textEmail);
-        textInfoClient.clear();
-        if (textFieldFind.getText().length() > 0){
-            String[] s = textFieldFind.getText().split(" ",3);
-            for(int i = 0; i < s.length; i++) {
-                if (i == 0){
-                    textFirtsName.setText(editText(s[i]));
-                } else if (i == 1){
-                    textLastName.setText(editText(s[i]));
-                } else if (i == 2){
-                    textPatronymicName.setText(editText(s[i]));
-                }
-            }
-            textFieldFind.clear();
-        }
-        setVisibleEndManaged(true, btnSaveEdit, vBOXEditClient);
-        setVisibleEndManaged(false, ButtonEditDateClient, ButtonDelClient, buttonOrderService, listViewListClients);
-        textFieldEdit(true,
-                textInfoClient,
-                textFirtsName,
-                textLastName,
-                textPatronymicName,
-                textTelephone,
-                textDateBirth,
-                textEmail);
-        vBOXEditClient.setOpacity(1);
-        nodesOpacity(0.5, textFieldFind, buttonFindClient, buttonGuest, buttonListClients);
-        nodesOpacity(1, textFirtsName, textLastName, textPatronymicName, textTelephone, textDateBirth,
-                     textInfoClient, textEmail);
+//        clearTextFields(
+//                textFirtsName,
+//                textLastName,
+//                textPatronymicName,
+//                textTelephone,
+//                textDateBirth,
+//                textEmail);
+//        textInfoClient.clear();
+//        if (textFieldFind.getText().length() > 0){
+//            String[] s = textFieldFind.getText().split(" ",3);
+//            for(int i = 0; i < s.length; i++) {
+//                if (i == 0){
+//                    textFirtsName.setText(editText(s[i]));
+//                } else if (i == 1){
+//                    textLastName.setText(editText(s[i]));
+//                } else if (i == 2){
+//                    textPatronymicName.setText(editText(s[i]));
+//                }
+//            }
+//            textFieldFind.clear();
+//        }
+//        setVisibleEndManaged(true, btnSaveEdit, vBOXEditClient);
+//        setVisibleEndManaged(false, ButtonEditDateClient, ButtonDelClient, buttonOrderService, listViewListClients);
+//        textFieldEdit(true,
+//                textInfoClient,
+//                textFirtsName,
+//                textLastName,
+//                textPatronymicName,
+//                textTelephone,
+//                textDateBirth,
+//                textEmail);
+//        vBOXEditClient.setOpacity(1);
+//        nodesOpacity(0.5, textFieldFind, buttonFindClient, buttonGuest, buttonListClients);
+//        nodesOpacity(1, textFirtsName, textLastName, textPatronymicName, textTelephone, textDateBirth,
+//                     textInfoClient, textEmail);
 
 
     }
@@ -631,10 +684,12 @@ public class GUIMainController {
     }
 
     //    Оформление услуги
-    public void methodOrderService (ActionEvent actionEvent) {
+    public void methodOrderService () {
         if (ActionClient.getClient() != null) {
             if (!actionEditClientData){
-            setVisibleEndManaged(false, vBOXEditClient);
+                textFieldNameClient.setText (ActionClient.getClient ().toStringIteam ());
+                textFieldBirthDay.setText (ActionClient.getClient ().getDateBirth ());
+//            setVisibleEndManaged(false, vBOXEditClient);
             setVisibleEndManaged(false, vBoxFindClient);
             setVisibleEndManaged(true, vBoxOrderService);
             setVisibleEndManaged(false, listViewListClients);
@@ -644,7 +699,7 @@ public class GUIMainController {
 
     //    Отмена оформления новой услуги
     public void methodCancelOrderService (ActionEvent actionEvent) {
-        setVisibleEndManaged(true, vBOXEditClient);
+//        setVisibleEndManaged(true, vBOXEditClient);
         setVisibleEndManaged(true, vBoxFindClient);
         setVisibleEndManaged(false, vBoxOrderService);
         setVisibleEndManaged(false, listViewListClients);
@@ -653,26 +708,88 @@ public class GUIMainController {
 
     public void openListClients (ActionEvent actionEvent){
         setVisibleEndManaged(true, listViewListClients);
-        setVisibleEndManaged(false, vBOXEditClient, buttonOrderService);
-        setVisibleEndManaged(false, vBoxOrderService);
-        nodesOpacity(1, buttonListClients);
-        nodesOpacity(0.5, textFieldFind, buttonFindClient, buttonGuest, buttonNewClient);
+//        setVisibleEndManaged(false, vBOXEditClient, buttonOrderService);
+//        setVisibleEndManaged(false, vBoxOrderService);
+//        nodesOpacity(1, buttonListClients);
+//        nodesOpacity(0.5, textFieldFind, buttonFindClient, buttonGuest, buttonNewClient);
+
+    }
+
+
+    public void updateListClients(){
         Platform.runLater(()->{
             listViewListClients.getItems().clear();
             for(int i = 0; i < clientClassList.size(); i++) {
-                listViewListClients.getItems().add(clientClassList.get(i).toStringIteam());
+                listViewListClients.getItems().add(clientClassList.get(i).infoHBox ());
             }
         });
     }
 
+
     public void addFindClient (MouseEvent mouseEvent){
 
         if (mouseEvent.getClickCount() == 2){
-            String name = listViewListClients.getSelectionModel().getSelectedItem();
-            textFieldFind.setText(name);
-            methodFindClientDataBase();
+            int selected = listViewListClients.getSelectionModel().getSelectedIndex ();
+//            textFieldFind.setText(name);
+//            methodFindClientDataBase();
+            ActionClient.setClient (clientClassList.get (selected));
+            methodOrderService ();
         }
     }
+
+    public void methodExitUser(ActionEvent actionEvent) {
+
+        AuthUserDateBase.editUserAuth(ActionUser.getUser ().getLogin (), false);
+        Platform.runLater (()->{
+            new DialogAuth (panelUserInterface, textFieldDateTameStart, textFieldNameUser);
+        });
+
+    }
+
+    public void systemClose() {
+        Stage stage = (Stage) panelUserInterface.getScene ().getWindow ();
+        stage.close ();
+        ServerMySQL.disconnect ();
+        LOG.info ("Приложение закрыто.");
+        System.exit (0);
+    }
+
+    public void initCashBookNull(ActionEvent actionEvent) {
+        CashBook.clearCashBook();
+        restart();
+    }
+
+    public void restart(){
+        LOG.info ("Рестарт приложения.");
+        Stage stage = (Stage) panelUserInterface.getScene ().getWindow ();
+        stage.close();
+        Platform.runLater( () -> new GUIMainStage ().start( new Stage() ) );
+        new InfoStage ("Рестарт приложения.");
+    }
+
+    public void methodEditUser (ActionEvent actionEvent) {
+        Platform.runLater (()->{
+            new DialogUserEdit (panelUserInterface, textFieldDateTameStart,textFieldNameUser);
+        });
+    }
+
+    public void methodAddNewUser (ActionEvent actionEvent) {
+
+        Platform.runLater (()->{
+            new DialogAddNewUser (panelUserInterface);
+        });
+    }
+
+    public void payNullClient (ActionEvent actionEvent) {
+
+        ClientClass clientClass = new ClientClass ();
+        clientClass.setId (0);
+        clientClass.setLastName ("Анонимный клиент");
+        ActionClient.setClient (clientClass);
+        methodOrderService ();
+    }
+
+
 //
 //    private Transaction transactionEnd;
 //    public static List<Service> list = new ArrayList<>();
@@ -688,7 +805,7 @@ public class GUIMainController {
 //            } else {
 //                transaction.balanceCalculation(transactionEnd);
 //            }
-//            System.out.println(transaction.toString());
+//            LOG.info (transaction.toString());
 //        }
 //        list.clear();
 //        list = new ArrayList<>();

@@ -3,9 +3,10 @@
     <output-path>$PROJECT_DIR$/out/artifacts/DataBaseSpartakGUI_jar</output-path>
     <root id="archive" name="DataBaseSpartakGUI.jar">
       <element id="module-output" name="DataBaseSpartakGUI" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/Lib/mysql-connector-java-8.0.23.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/Lib/log4j-1.2.17.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Lib/poi-3.11.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/Lib/telegrambots-3.6-jar-with-dependencies.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Lib/log4j-1.2.17.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Lib/mysql-connector-java-8.0.23.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
