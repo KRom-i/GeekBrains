@@ -29,8 +29,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.telegram.telegrambots.ApiConstants;
+import org.telegram.telegrambots.ApiContext;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
 import СustomTitlePanel.ChoiceTitlePanel;
 import СustomTitlePanel.EditServicesTitlePanel;
 import java.util.ArrayList;
@@ -183,22 +186,24 @@ public class GUIMainController {
     }
 
 
-    private TelegramBotsApi telegramBotsApi;
-    private BotTelegram bot;
+    public static TelegramBotsApi telegramBotsApi;
+    public static BotTelegram bot;
 
     public void initBot() {
-
-
-        ApiContextInitializer.init();
-        telegramBotsApi = new TelegramBotsApi();
-
+        try {
+            ApiContextInitializer.init();
+        }   catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
-
-                bot = new BotTelegram ();
-                telegramBotsApi.registerBot (bot);
-
-//            bot.sendMsgStart("Start server");
+            telegramBotsApi = new TelegramBotsApi();
+        }   catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            bot = new BotTelegram ();
+            telegramBotsApi.registerBot (bot);
         }   catch (Exception e) {
             e.printStackTrace();
         }
@@ -770,6 +775,7 @@ public class GUIMainController {
     }
 
     public void restart(){
+
         LOG.info ("Рестарт приложения.");
         Stage stage = (Stage) panelUserInterface.getScene ().getWindow ();
         stage.close();

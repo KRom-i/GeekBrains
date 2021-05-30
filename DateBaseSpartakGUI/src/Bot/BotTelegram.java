@@ -1,6 +1,9 @@
 package Bot;
 
+import Cash.CashBook;
 import Cash.Transaction;
+import Format.DateTime;
+import Format.Round;
 import GUIMain.CustomStage.SystemErrorStage;
 import Logger.LOG;
 import MySQLDB.MySqlClass;
@@ -34,7 +37,7 @@ public class BotTelegram extends TelegramLongPollingBot {
 
 
 
-    public void sendMsg(String text, String id){
+    public void sendMsg(String id, String text){
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
@@ -105,6 +108,44 @@ public class BotTelegram extends TelegramLongPollingBot {
 
     public void onUpdateReceived(Update update) {
 
+        LOG.info (String.format (">>> TELEGRAM BOT <<< update.toString [%s]", update.toString ()));
+        if (update.getCallbackQuery() != null){
+            LOG.info (String.format (">>> TELEGRAM BOT <<< update.getCallbackQuery().getData()[%s]", update.getCallbackQuery().getData()));
+            String data = update.getCallbackQuery().getData();
+            String idIn = update.getCallbackQuery().getFrom().getId().toString();
+            String fullName = update.getCallbackQuery().getFrom().getLastName() + " " + update.getCallbackQuery().getFrom().getFirstName();
+
+            if (checkIdAdmin (idIn, "admin")){
+                if (data.startsWith("/CashBookTran")){
+                    try {
+                        String[] s = data.split("=");
+                        double sum = Double.valueOf(s[1]);
+                        Transaction t = new Transaction();
+                        t.setDateTransaction(new DateTime().currentDate());
+                        t.setTimeTransaction(new DateTime().currentTime());
+                        t.setIdTransaction(123);
+                        t.setIdUser(Integer.valueOf(idIn));
+                        t.setNameUser(fullName);
+                        t.setNameTransaction("IPA java Telegram");
+                        if (s[0].equalsIgnoreCase("/CashBookTranNonCashWriteOf")) {
+                            t.setSumNonCashConsumptionDay(sum);
+                            CashBook.addTransactionToCashBook(t);
+                            sendMsg(idIn, msgBalanсe());
+                        } else if (s[0].equalsIgnoreCase("/CashBookTranNonCashEnroll")) {
+                            t.setSumNonCashReceipt(sum);
+                            CashBook.addTransactionToCashBook(t);
+                            sendMsg(idIn, msgBalanсe());
+                        }
+
+                    } catch (Exception e){
+                        sendMsg(idIn, "Ошибка выполнения операции.");
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }
+
         Message message = update.getMessage();
 
         if (message != null && message.hasText()) {
@@ -113,6 +154,7 @@ public class BotTelegram extends TelegramLongPollingBot {
             String inMsg = message.getText ();
 
             LOG.info  (String.format ("Сообщение от клиента [%s] [%s]", idInMsg, inMsg));
+
 
 //            Взаимодействие с администратором Telegram
             if (!inMsg.startsWith ("/dev")){
@@ -135,12 +177,29 @@ public class BotTelegram extends TelegramLongPollingBot {
                          }
                      }
 
-                } else {
+                } else if (checkChars(inMsg)) {
+
+                     try {
+                         double sum = Double.valueOf(inMsg);
+                         sum = new Round().getDoubleValue(sum);
+                         sendMsg(idInMsg, msgBalanсe());
+                         setInlineCashBook(idInMsg, String.format("Сумма безн. операции %s руб.", sum + ""), sum);
+                     } catch (NumberFormatException e){
+                         sendMsg(idInMsg, "Ошибка ! Некорректная сумма. \nФормат ввода 0000.00 ");
+                         e.printStackTrace();
+                     }
+
+
+                 } else if (inMsg.equalsIgnoreCase("Баланс кассы")){
+
+                     setButtonsMsg (idInMsg, msgBalanсe() , "Главное меню");
+
+                 }else {
 
                     if (checkIdAdmin (idInMsg, "developer")){
-                        setButtonsMsg (idInMsg, "Главное меню", "Кассовая книга", "Отчет", "/developer");
+                        setButtonsMsg (idInMsg, "Главное меню", "Баланс кассы", "Кассовая книга", "Отчет", "/developer");
                     }  else {
-                        setButtonsMsg (idInMsg, "Главное меню", "Кассовая книга", "Отчет");
+                        setButtonsMsg (idInMsg, "Главное меню", "Баланс кассы", "Кассовая книга", "Отчет");
                     }
 
                 }
@@ -162,7 +221,7 @@ public class BotTelegram extends TelegramLongPollingBot {
 
                     } else if (inMsg.equalsIgnoreCase ("/dev@CMD")){
 
-                        setButtonsMsg(idInMsg, "Developer Choice CMD", "/dev Show tables","/dev@CMD 2","/dev@CMD 3","/dev@CMD 4", "/dev Main menu");
+                        setButtonsMsg(idInMsg, "Developer Choice CMD", "/dev Show tables","/devTestDataLine@","/dev@CMD 3","/dev@CMD 4", "/dev Main menu");
 
                     } else if (inMsg.equalsIgnoreCase ("/dev Show tables")) {
                         try {
@@ -177,6 +236,8 @@ public class BotTelegram extends TelegramLongPollingBot {
                             e.printStackTrace ();
                         }
                         setButtonsMsg(idInMsg, "Show tables" , "/dev Main menu");
+                    } if (inMsg.equalsIgnoreCase ("/devTestDataLine@")){
+
                     }
 
 
@@ -267,15 +328,15 @@ public class BotTelegram extends TelegramLongPollingBot {
         }
     }
 
-    private void setInline(SendMessage sendMessage) {
+    private void setInlineCashBook(String id, String textMsg, double sum) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
 
         List<InlineKeyboardButton> buttons1 = new ArrayList<>();
 
         InlineKeyboardButton inlineKeyboardButton =
-                new InlineKeyboardButton().setText("Списать").setCallbackData ("Data");
+                new InlineKeyboardButton().setText("Списать").setCallbackData ("/CashBookTranNonCashWriteOf=" + sum);
         InlineKeyboardButton inlineKeyboardButton2 =
-                new InlineKeyboardButton().setText("Зачислить").setCallbackData ("Data");
+                new InlineKeyboardButton().setText("Зачислить").setCallbackData ("/CashBookTranNonCashEnroll=" + sum);
 
         buttons1.add(inlineKeyboardButton);
         buttons1.add(inlineKeyboardButton2);
@@ -284,10 +345,17 @@ public class BotTelegram extends TelegramLongPollingBot {
         InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
         markupKeyboard.setKeyboard(buttons);
 
+        SendMessage sendMessage = new SendMessage ();
         sendMessage.setReplyMarkup (markupKeyboard);
+        sendMessage.enableMarkdown (true);
+        sendMessage.setChatId (id);
+        sendMessage.setText (textMsg);
 
-
-
+        try {
+            sendMessage(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace ();
+        }
     }
 
     public String getBotUsername() {
@@ -333,5 +401,39 @@ public class BotTelegram extends TelegramLongPollingBot {
             ServerMySQL.resultSetClose(rs);
         }
         return check;
+    }
+
+
+    private boolean checkChars(String str){
+        String[] s1 = {"0", "1","2","3","4","5","6","7","8", "9",};
+
+        for(String s: s1
+            ) {
+            if (str.startsWith(s)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    private String msgBalanсe(){
+
+        Transaction t = CashBook.getEndTransactionDataBase();
+        double cash = t.getSumCashBalanceEnd();
+        double nonCash = t.getSumNonCashBalanceEnd();
+        double all = t.getSumAllBalanceEnd();
+
+        String date = t.getDateTransaction();
+        String time = t.getTimeTransaction();
+
+        return  String.format("[%s] [%s]\n" +
+                              "Дата и время последней операции \n\n" +
+                              "Текущий остаток:\n" +
+                              "Нал [%s] руб.\n" +
+                              "Счт [%s] руб.\n" +
+                              "Общ [%s] руб.\n",date, time, cash, nonCash, all);
+
     }
 }

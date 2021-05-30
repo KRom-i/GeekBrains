@@ -291,7 +291,7 @@ new SystemErrorStage (e);
     }
 
     //    Метод возвращает последнюю транзакцию из БД;
-    private static Transaction getEndTransactionDataBase () {
+    public static Transaction getEndTransactionDataBase () {
 
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -315,6 +315,8 @@ new SystemErrorStage (e);
 
                 transaction = new Transaction ();
                 transaction.setNumberTransaction (rs.getInt (1));
+                transaction.setDateTransaction(rs.getString(2));
+                transaction.setTimeTransaction(rs.getString(3));
                 transaction.setSumCashBalanceEnd (rs.getDouble (21));
                 transaction.setSumNonCashBalanceEnd (rs.getDouble (22));
                 transaction.setSumAllBalanceEnd (rs.getDouble (23));
@@ -335,7 +337,7 @@ new SystemErrorStage (e);
     }
 
 //    Добавление в базу данных миную Графический интерфейс
-    private static void addTransactionToCashBookNotGui (Transaction t) {
+    public static void addTransactionToCashBookNotGui (Transaction t) {
 
         Transaction t1 = CashBook.getEndTransactionDataBase ();
         t.balanceCalculation (t1);
@@ -557,8 +559,9 @@ new SystemErrorStage (e);
 //            statement2.setBoolean (11, t.isDeleteTran ());
 //
 //            statement2.executeUpdate();
-
-            new InfoStage ("Сохранение операции");
+            if (t.getIdTransaction() != 123){
+                new InfoStage ("Сохранение операции");
+            }
             LOG.info ("Сохранение операции");
             return true;
         } catch (SQLException e) {
