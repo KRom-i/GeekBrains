@@ -107,11 +107,11 @@
                                       <Label minHeight="40" text="Дата рождения" textAlignment="CENTER" />
                                       <TextField fx:id="textFieldBirthDay" editable="false" maxWidth="150" minHeight="40" minWidth="150" />
                                   </HBox>
-                                  <HBox>
-                                      <VBox fx:id="vBoxChoiceService" alignment="TOP_CENTER" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                  <HBox VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
+                                      <VBox fx:id="vBoxChoiceService" alignment="TOP_CENTER" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" spacing="1">
                                           <Label text="Выбор услуги/товара" />
                                       </VBox>
-                                      <VBox fx:id="vBoxActionService" alignment="TOP_CENTER" maxWidth="400" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                      <VBox fx:id="vBoxActionService" alignment="TOP_CENTER" maxWidth="400"  spacing="5" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                                           <Label text="Дествующие абонементы клиента" />
                                       </VBox>
                                   </HBox>
@@ -124,8 +124,38 @@
              </Tab>
                <Tab text="БАЗА ДАННЫХ">
                <content>
-                   <VBox fx:id="vBoxEditServices" maxWidth="Infinity" VBox.vgrow="ALWAYS" />
+                   <VBox fx:id="vBoxEditServices" HBox.hgrow="ALWAYS"  VBox.vgrow="ALWAYS" />
                </content>
+               </Tab>
+               <Tab text="БАЗА ДАННЫХ">
+                   <content>
+                       <VBox fx:id="vBoxEditServicesTest" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
+                       <TitledPane text="1" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" >
+                           <content>
+                           <ListView VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS"></ListView>
+                           </content>
+                       </TitledPane>
+                       <TitledPane text="1" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" >
+                           <content>
+                               <ListView VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS"></ListView>
+                           </content>
+                       </TitledPane>
+                       <TitledPane text="1" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" >
+                           <content>
+                               <ListView VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS"></ListView>
+                           </content>
+                       </TitledPane>
+                       <TitledPane text="1" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" >
+                           <content>
+                               <ListView VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS"></ListView>
+                           </content>
+                       </TitledPane>
+                       <TitledPane text="1" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" >
+                           <content>
+                               <ListView VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS"></ListView>
+                           </content>
+                       </TitledPane>
+                   </content>
                </Tab>
            </tabs>
                <HBox.margin>
@@ -133,7 +163,7 @@
                </HBox.margin>
          </TabPane>
           </HBox>
-       <VBox fx:id="panelUserInterface" alignment="TOP_RIGHT" maxHeight="Infinity" maxWidth="350" minWidth="220.0" prefWidth="300.0" spacing="5.0" styleClass="panelUserInterface-VBox" VBox.vgrow="ALWAYS">
+       <VBox fx:id="panelUserInterface" alignment="TOP_CENTER" maxHeight="Infinity" maxWidth="350" minWidth="220.0" prefWidth="300.0" spacing="5.0" styleClass="panelUserInterface-VBox" VBox.vgrow="ALWAYS">
             <children>
                 <VBox alignment="TOP_LEFT" maxWidth="220">
                      <Label text="Дата и время входа">

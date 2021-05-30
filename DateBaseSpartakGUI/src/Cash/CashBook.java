@@ -334,6 +334,89 @@ new SystemErrorStage (e);
         return null;
     }
 
+//    Добавление в базу данных миную Графический интерфейс
+    private static void addTransactionToCashBookNotGui (Transaction t) {
+
+        Transaction t1 = CashBook.getEndTransactionDataBase ();
+        t.balanceCalculation (t1);
+
+        writeHistoryFileXls (t);
+
+        PreparedStatement statement = null;
+
+        try {
+
+            String query = "INSERT INTO CashBook (" +
+                    " numberTransaction, dateTransaction, timeTransaction," +
+                    " idTransaction, nameTransaction," +
+                    " idService, nameService," +
+                    " idClient, nameClient," +
+                    " idUser, nameUser," +
+                    " idTypePayment, nameTypePayment," +
+                    " sumCashReceipt, sumCashConsumption," +
+                    " sumNonCashReceipt, sumNonCashConsumption," +
+                    " sumCashBalanceBegin, sumNonCashBalanceBegin, sumAllBalanceBegin," +
+                    " sumCashBalanceEnd, sumNonCashBalanceEnd, sumAllBalanceEnd," +
+                    " deleteTran" +
+                    ") VALUES (" +
+                    "?, ?, ?, ?, ?," +
+                    " ?, ?, ?, ?, ?," +
+                    " ?, ?, ?, ?, ?," +
+                    " ?, ?, ?, ?, ?," +
+                    " ?, ?, ?, ?);";
+
+
+            statement = ServerMySQL.getConnection ().prepareStatement (query);
+
+            statement.setInt (1, t.getNumberTransaction ());
+            statement.setString (2, t.getDateTransaction ());
+            statement.setString (3, t.getTimeTransaction ());
+
+            statement.setInt (4, t.getIdTransaction ());
+            statement.setString (5, t.getNameTransaction ());
+
+            statement.setInt (6, t.getIdService ());
+            statement.setString (7, t.getNameService ());
+
+            statement.setInt (8, t.getIdClient ());
+            statement.setString (9, t.getNameClient ());
+
+            statement.setInt (10, t.getIdUser ());
+            statement.setString (11, t.getNameUser ());
+
+            statement.setInt (12, t.getIdTypePayment ());
+            statement.setString (13, t.getNameTypePayment ());
+
+            statement.setDouble (14, t.getSumCashReceipt ());
+            statement.setDouble (15, t.getSumCashConsumption ());
+
+            statement.setDouble (16, t.getSumNonCashReceipt ());
+            statement.setDouble (17, t.getSumNonCashConsumption ());
+
+            statement.setDouble (18, t.getSumCashBalanceBegin ());
+            statement.setDouble (19, t.getSumNonCashBalanceBegin ());
+            statement.setDouble (20, t.getSumAllBalanceBegin ());
+
+            statement.setDouble (21, t.getSumCashBalanceEnd ());
+            statement.setDouble (22, t.getSumNonCashBalanceEnd ());
+            statement.setDouble (23, t.getSumAllBalanceEnd ());
+
+            statement.setBoolean (24, t.isDeleteTran ());
+
+            statement.executeUpdate ();
+
+            LOG.info (String.format  ("Текущая транзакция: \n [%s] \n", t.toString ()));
+
+        LOG.info ("Сохранение операции");
+
+    } catch (SQLException e) {
+        e.printStackTrace ();
+    } finally {
+        ServerMySQL.statementClose (statement);
+    }
+
+}
+
     //    Метод производит расчет транзакции
     public static void addTransactionToCashBook (Transaction t2) {
         Transaction t1 = CashBook.getEndTransactionDataBase ();
@@ -480,7 +563,7 @@ new SystemErrorStage (e);
             return true;
         } catch (SQLException e) {
             e.printStackTrace ();
-new SystemErrorStage (e);
+            new SystemErrorStage (e);
         } finally {
             ServerMySQL.statementClose (statement);
         }
@@ -491,33 +574,26 @@ new SystemErrorStage (e);
     public static void main (String[] args) {
 
 
-//        UserSpartak user = new UserSpartak (1, "Roman", "log", 12345, false);
-//        Service service = new Product ("serviceNameTest", 200, 10, 1);
-//        ClientClass client = new ClientClass ();
-//        client.setId (1234);
-//        client.setLastName ("Иван");
-//        client.setFirstName ("Иванов");
-//        client.setPatronymicName ("Иванович");
-//
-//
-//        CashFlow cashFlow = new CashFlow ();
-//        cashFlow.setName ("Списание по запросу Телеграм");
-//        cashFlow.setCost (200);
-//
-//        ServerMySQL.getConnection ();
-//
-//
-//        for (Transaction t: new Transaction[2_000]
-//        ) {
-//            t = new Transaction (1, service, client, user, 1 );
-//            CashBook.addTransactionToCashBook (t);
-//        }
+        for (int i = 0; i < 160; i++) {
 
-//        for (Transaction t: new Transaction[20]
-//        ) {
-//            t = new Transaction (3, service, client, user, 3 );
-//            CashBook.addTransactionToCashBook (t);
-//        }
+        UserSpartak user = new UserSpartak (1, "admin", "log", 12345, false);
+        Service service = new Product ("УСЛУГИ.ТОВАР", 100, 10, 1);
+        ClientClass client = new ClientClass ();
+        client.setId (1234);
+        client.setLastName ("Иван");
+        client.setFirstName ("Иванов");
+        client.setPatronymicName ("Иванович");
+
+        ServerMySQL.getConnection ();
+        for (Transaction t: new Transaction[100]
+        ) {
+            t = new Transaction (1, service, client, user, 1 );
+            CashBook.addTransactionToCashBookNotGui (t);
+        }
+            new DateTime ().upDay();
+        }
+        ServerMySQL.disconnect ();
+
 
 //        ServerMySQL.getConnection ();
 //        addEndCashBookStrNull ();
@@ -575,14 +651,12 @@ new SystemErrorStage (e);
 
         } catch (Exception e) {
             e.printStackTrace ();
-new SystemErrorStage (e);
         } finally {
             if (outputStream != null) {
                 try {
                     outputStream.close ();
                 } catch (IOException e) {
                     e.printStackTrace ();
-new SystemErrorStage (e);
                 }
             }
             if (workbook != null) {
@@ -590,7 +664,6 @@ new SystemErrorStage (e);
                     workbook.close ();
                 } catch (IOException e) {
                     e.printStackTrace ();
-new SystemErrorStage (e);
                 }
             }
 
@@ -631,7 +704,7 @@ new SystemErrorStage (e);
 
             LOG.info  ("Последная заполенненная строка " + sheet.getLastRowNum ());
 
-            sheet.protectSheet ("pass");
+//            sheet.protectSheet ("pass");
 
             int r = sheet.getLastRowNum () + 1;
             Row row = sheet.createRow (r);
@@ -905,14 +978,14 @@ new SystemErrorStage (e);
 
         } catch (Exception e) {
             e.printStackTrace ();
-new SystemErrorStage (e);
+            new SystemErrorStage (e);
         } finally {
             if (outputStream != null) {
                 try {
                     outputStream.close ();
                 } catch (IOException e) {
                     e.printStackTrace ();
-new SystemErrorStage (e);
+                new SystemErrorStage (e);
                 }
             }
             if (workbook != null) {
@@ -920,7 +993,7 @@ new SystemErrorStage (e);
                     workbook.close ();
                 } catch (IOException e) {
                     e.printStackTrace ();
-new SystemErrorStage (e);
+                new SystemErrorStage (e);
                 }
             }
 

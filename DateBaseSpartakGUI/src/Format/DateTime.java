@@ -1,6 +1,7 @@
 package Format;
 
 import GUIMain.CustomStage.SystemErrorStage;
+import Logger.LOG;
 import MySQLDB.ServerMySQL;
 import WorkDataBase.UserSpartak;
 import javafx.stage.Stage;
@@ -37,6 +38,23 @@ public class DateTime {
 
 //   Добавляет время заданное пользователем в минутах
 
+//    На день вперед
+    public void upDay(){
+        long time = 86400000;
+        System.out.println (time);
+        try {
+            SimpleDateFormat format = new SimpleDateFormat();
+            format.applyPattern("dd.MM.yyyy");
+            Date docDate= format.parse(new DateTime ().currentDate ());
+            docDate.setTime (docDate.getTime () + time);
+            String upDay = new SimpleDateFormat("dd.MM.yyyy").format(docDate);
+            LOG.info (String.format ( "Новая дата [%s]", upDay));
+            setDateConfig (upDay);
+        } catch (ParseException e) {
+            e.printStackTrace ();
+        }
+    }
+
     private String upTime(){
         long time = Long.valueOf (getTime ()) * 60000;
         System.out.println (time);
@@ -49,7 +67,6 @@ public class DateTime {
 
         } catch (ParseException e) {
             e.printStackTrace ();
-        new SystemErrorStage (e);
         }
         return null;
     }
@@ -61,7 +78,6 @@ public class DateTime {
             return format.parse(new DateTime ().getDate ());
         } catch (ParseException e) {
             e.printStackTrace ();
-        new SystemErrorStage (e);
         }
         return null;
     }

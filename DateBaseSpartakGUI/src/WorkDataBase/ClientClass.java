@@ -194,17 +194,20 @@ public class ClientClass {
         TextField textFieldID = new TextField (getId () + "");
         textFieldID.setMinWidth (60);
         textFieldID.setMaxWidth (60);
+        textFieldID.setMaxHeight (15);
         textFieldID.setEditable (false);
 
         Label labelName = new Label ("ФИО: ");
         TextField textFieldName= new TextField (toStringIteam ());
         textFieldName.setMinWidth (300);
+        textFieldName.setMaxHeight (15);
         textFieldName.setEditable (false);
 
         Label labelBirthDay= new Label ("Дата рождения: ");
         TextField textFieldBirthDay= new TextField (getDateBirth ());
         textFieldBirthDay.setMinWidth (100);
         textFieldBirthDay.setMaxWidth (100);
+        textFieldBirthDay.setMaxHeight (15);
         textFieldBirthDay.setEditable (false);
 
 
@@ -212,6 +215,7 @@ public class ClientClass {
         TextField textFieldTel= new TextField (getTelephone ());
         textFieldTel.setMinWidth (150);
         textFieldTel.setMaxWidth (150);
+        textFieldTel.setMaxHeight (15);
         textFieldTel.setEditable (false);
 
         HBox hBox = new HBox ();

@@ -1,0 +1,152 @@
+
+use geodata;
+
+select * from _regions;
+select * from _countries;
+select * from _cities;
+
+
+#count(*) Выводит количество записей 
+select count(*) from _cities ci 
+left join _regions rg on rg.region_id-ci.region_id;
+
+
+
+
+
+
+
+
+SELECT city_id, title_ru, region_id, region_ru, country_id from _cities as cit
+where region_id is not null ;
+
+
+SELECT city_id, title_ru, region_id, region_ru from _cities as cit
+where region_id is not null;
+
+
+ДЛЯ ТЕСТА
+select round(AVG(salary),2) from salaries as t_sal 
+left join dept_emp on t_sal.emp_no=dept_emp.emp_no 
+and dept_emp.dept_no like 'd001%';
+(63810.74)
+
+select round(AVG(salary),2) from salaries as t_sal 
+left join dept_emp on dept_emp.to_date = 9999-01-01;
+(63810.74)
+
+select round(AVG(salary),2) from salaries as t_sal 
+;
+(63810.74)
+
+
+64308.60		
+57622.93	d005	Development
+57611.66	d004	Production
+55050.77	d009	Customer Service
+57443.59	d008	Research
+55156.70	d006	Quality Management
+78823.80	d007	Sales
+68901.81	d002	Finance
+69744.65	d001	Marketing
+53070.58	d003	Human Resources
+
+10009
+
+Удаление сразу в двух столбцах 
+
+select * from dept_emp as d
+inner join salaries as s on d.to_date = '9999-01-01'
+and s.to_date = '9999-01-01' 
+and s.emp_no = d.emp_no
+and s.emp_no = (select emp_no from salaries 
+where salary = (select max(salary) from salaries));
+
+43624	d007	1985-03-26	9999-01-01	43624	158220	2002-03-22	9999-01-01
+
+use geodata;
+
+# Задание 1.1
+# Сделать запрос, в котором мы выберем все данные о городе –
+# регион, страна(из трёх разных таблиц, объединяем эти таблицы, 
+# учитывая, что у нас есть города в которых ид_региона =NULL). 
+SELECT * from _cities as cit 
+left join _regions as reg on cit.region_id=reg.region_id and cit.region_id is not null
+left join _countries as cou on reg.country_id=cou.country_id;
+#
+
+# Задание 1.2
+# Выбрать все города из Московской области.
+select * from _cities
+where region_id = (select region_id from _regions where title_ru like 'Московс%');
+#
+
+
+
+use employees;
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+# Задание 2.1
+# Выбрать среднюю зарплату по отделам + (номер и наименование отдела)
+select round(AVG(salary),2), dept_emp.dept_no, departments.dept_name from salaries as t_sal 
+left join dept_emp on dept_emp.emp_no = t_sal.emp_no and dept_emp.to_date = '9999-01-01'
+left join departments on departments.dept_no = dept_emp.dept_no
+GROUP BY dept_emp.dept_no;
+# Задание 2.1
+2 й вариант
+ select round(AVG(salary),2), dept_emp.dept_no, departments.dept_name from salaries as t_sal 
+left join dept_emp on dept_emp.emp_no = t_sal.emp_no and dept_emp.to_date = '9999-01-01'
+left join departments USING (dept_no) 
+GROUP BY dept_emp.dept_no;
+#
+
+
+# Задание 2.2
+# Выбрать максимальную зарплату у сотрудника(сотрудник не должне быть уволен)
+select max(salary), employees.first_name, employees.last_name, employees.birth_date from salaries as t_sal
+left join dept_emp on dept_emp.emp_no = t_sal.emp_no and dept_emp.to_date = '9999-01-01'
+left join employees on dept_emp.emp_no = employees.emp_no  
+;
+
+# Задание 2.3
+# Удалить одного сотрудника, у которого максимальная зарплата(Применение подзапросов обязательно,
+# сотрудник должен быть не уволенным, и удалить мы должны одного сотрудника.
+delete from employees
+where emp_no = (select emp_no from salaries 
+where salary = (select max(salary) from salaries) and to_date = '9999-01-01');
+# 
+
+# Задание 2.4
+#Посчитать количество сотрудников во всех отделах(Мы подсчитываем количество не уволенных сотрудников).
+select dept_no, count(emp_no) from dept_emp 
+where to_date = '9999-01-01' group by dept_no;
+#
+d001	14842
+d002	12437
+d003	12898
+d004	53304
+d005	61386
+d006	14545
+d007	37700
+d008	15441
+d009	17569
+
+
+# Задание 2.5
+select dept_emp.dept_no, departments.dept_name, count(dept_emp.emp_no), sum(salaries.salary)  from dept_emp 
+left join departments using (dept_no)
+left join salaries using (emp_no)
+Where dept_emp.to_date = '9999-01-01'
+and salaries.to_date = '9999-01-01'
+group by dept_emp.dept_no;
+#
+
+d005	Development	61386	4153249050
+d007	Sales	37700	3349687582
+d004	Production	53304	3616319369
+d003	Human Resources	12898	824464664
+d008	Research	15441	1048650423
+d006	Quality Management	14545	951824827
+d001	Marketing	14842	1188233434
+d009	Customer Service	17569	1182134209
+d002	Finance	12437	977049936
+

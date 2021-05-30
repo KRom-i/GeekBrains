@@ -31,6 +31,7 @@ public class ChoiceTitlePanel {
         for(int i = 0; i < x; i++) {
             listViews[i] = new ListView<>();
 
+
             if (i == 0){
                 listViews[i].getItems().add(new OneTimeService("OneTimeServiceTest", 150.50, 1).getHBoxInfo());
             } else if (i == 1){

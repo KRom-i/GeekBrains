@@ -12,6 +12,7 @@ import Logger.LOG;
 import MySQLDB.ServerMySQL;
 import Services.ActionService;
 import Services.Service;
+import Services.StageService.*;
 import WorkDataBase.*;
 import WorkDataBase.AuthUser.DialogAuth;
 import WorkDataBase.User.DialogAddNewUser;
@@ -124,9 +125,14 @@ public class GUIMainController {
         NodeViewHistory.init (listViewHistoryTran);
 
         updateListClients();
+//        Platform.runLater (()->{
+//            new StageNewService (listViewHistoryTran);
+//
+//        });
 
+        initBot ();
 
-//        initBot ();
+        ServerMySQL.getConnectionNameDateBase ("cities_info");
 
     }
 
@@ -182,13 +188,17 @@ public class GUIMainController {
 
     public void initBot() {
 
+
         ApiContextInitializer.init();
         telegramBotsApi = new TelegramBotsApi();
 
+
         try {
-            bot = new BotTelegram();
-            telegramBotsApi.registerBot(bot);
-            bot.sendMsgStart("Start server");
+
+                bot = new BotTelegram ();
+                telegramBotsApi.registerBot (bot);
+
+//            bot.sendMsgStart("Start server");
         }   catch (Exception e) {
             e.printStackTrace();
         }

@@ -47,7 +47,7 @@ public class DialogDateInit {
 
         newWindow.setTitle ("Установка новой даты и времени");
 
-        Scene scene = new Scene (stackPane, 310, 260);
+        Scene scene = new Scene (stackPane, 310, 310);
 
 //        scene.setOnMouseClicked(new EventHandler<MouseEvent> () {
 //            @Override
@@ -76,6 +76,17 @@ public class DialogDateInit {
         datePickerTest.setMinSize (250,40);
         datePickerTest.setMaxWidth (250);
 
+        Button buttonUpDay = new Button ("+ 1 день");
+        buttonUpDay.setMinSize (250,40);
+        buttonUpDay.setOnAction (new EventHandler<ActionEvent> () {
+            @Override
+            public void handle (ActionEvent event) {
+                new DateTime().upDay();
+                Stage stage = (Stage) mainStage.getScene ().getWindow ();
+                stage.close();
+                Platform.runLater( () -> new GUIMainStage ().start( new Stage() ) );
+            }
+        });
 //        TextField datePicker = new TextField ();
 //        datePicker.setMinSize (250,40);
 //        datePicker.setMaxWidth (250);
@@ -158,7 +169,7 @@ public class DialogDateInit {
 
 
 
-        vBox.getChildren ().addAll (labelDate, datePickerTest,labelTime, spinnerTime, button, button2);
+        vBox.getChildren ().addAll (labelDate, datePickerTest, buttonUpDay, labelTime, spinnerTime, button, button2);
 
         stackPane.getChildren ().add (vBox);
 

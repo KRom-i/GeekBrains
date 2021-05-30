@@ -61,8 +61,10 @@ public final class ServerMySQL {
             readConfig();
             try {
                 URL = String.format ("jdbc:mysql://%s:%s/DateBaseSpartak", LOCAL,PORT );
+                LOG.info (String.format ("Connect Date Base URL [%s]", URL));
                 connection = DriverManager.
                         getConnection(URL, USER_LOG, PASS);
+
             } catch (SQLException e) {
                 LOG.error("Connection mysql", e);
                 e.printStackTrace();
@@ -93,6 +95,35 @@ public final class ServerMySQL {
         try {
             resultSet.close();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private static Connection connectionNameDateBase;
+
+    public static Connection getConnectionNameDateBase(String nameDateBase){
+        if (connectionNameDateBase == null){
+            readConfig();
+            try {
+                URL = String.format ("jdbc:mysql://%s:%s/%s", LOCAL,PORT, nameDateBase);
+                LOG.info (String.format ("Connect Date Base URL [%s]", URL));
+                connectionNameDateBase = DriverManager.
+                        getConnection(URL, USER_LOG, PASS);
+            } catch (SQLException e) {
+                LOG.error("Connection mysql", e);
+                e.printStackTrace();
+            }
+        }
+
+        return connectionNameDateBase;
+    }
+
+    public static void disconnectNameDateBase(){
+        try {
+            connectionNameDateBase.close();
+        } catch (SQLException e) {
+            LOG.error("Connection.close mysql", e);
             e.printStackTrace();
         }
     }
