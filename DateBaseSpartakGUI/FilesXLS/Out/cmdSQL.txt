@@ -1,0 +1,326 @@
+/dev@CMD@SQL@SELECT * FROM CashBook;
+
+
+CREATE TABLE CashBook (
+    1 numberTransaction      INT,
+    2 dateTransaction        TEXT,
+    3 timeTransaction        TEXT,
+	
+    4 idTransaction          INT,
+    5 nameTransaction        TEXT,
+	
+    6 idService              INT,
+    7 nameService            TEXT,
+	
+    8 idClient               INT,
+    9 nameClient             TEXT,
+	
+    10 idUser                 INT,
+    11 nameUser               TEXT,
+	
+    12 idTypePayment          INT,
+    13 nameTypePayment        TEXT,
+	
+    14 sumCashReceipt         DOUBLE,
+    15 sumCashConsumption     DOUBLE,
+	
+    16 sumNonCashReceipt      DOUBLE,
+    17 sumNonCashConsumption  DOUBLE,
+	
+    18 sumCashBalanceBegin    DOUBLE,
+    19 sumNonCashBalanceBegin DOUBLE,
+    20 sumAllBalanceBegin     DOUBLE,
+	
+    21 sumCashBalanceEnd      DOUBLE,
+    22 sumNonCashBalanceEnd   DOUBLE,
+    23 sumAllBalanceEnd       DOUBLE,
+	
+    24 deleteTran             BOOLEAN
+);
+
+
+UPDATE CashBook SET deleteTran = 1 WHERE numberTransaction = 2045;
+
+
+         String query = "INSERT INTO CashBook (" +
+                    " numberTransaction, dateTransaction, timeTransaction," +
+                    " idTransaction, nameTransaction," +
+                    " idService, nameService," +
+                    " idClient, nameClient," +
+                    " idUser, nameUser," +
+                    " idTypePayment, nameTypePayment," +
+                    " sumCashReceipt, sumCashConsumption," +
+                    " sumNonCashReceipt, sumNonCashConsumption," +
+                    " sumCashBalanceBegin, sumNonCashBalanceBegin, sumAllBalanceBegin," +
+                    " sumCashBalanceEnd, sumNonCashBalanceEnd, sumAllBalanceEnd," +
+                    " deleteTran" +
+                    ") VALUES (" +
+                    "?,?,?,?,?," +
+                    "?,?,?,?,?," +
+                    "?,?,?,?,?," +
+                    "?,?,?,?,?," +
+                    "?,?,?,?);";
+					
+					
+					
+					
+CREATE TABLE ValueAccountingBook (
+operationNumber INT,
+operationDate TEXT,
+operationTime TEXT,
+idUser INT,
+nameUser TEXT,
+idService INT,
+nameService TEXT,
+Coming INT,
+Consumption INT,
+Balance INT
+);
+
+
+
+
+Авто инкримент
+
+
+ALTER TABLE ValueAccountingBook MODIFY operationNumber int NOT NULL AUTO_INCREMENT;
+ALTER TABLE ValueAccountingBook AUTO_INCREMENT = 1;
+
+
+
+/dev@CMD@SQL@SELECT * FROM SERVICE_GENERAL_VALUES;
+
+CREATE TABLE SERVICE_GENERAL_VALUES(
+ID_SERVICE INT,
+ID_TYPE_SERVICE INT,
+ID_GROUP_SERVICE INT,
+NAME_SERVICE TEXT,
+COST_SERVICE DOUBLE,
+NUMBER_VISITS_INT INT,
+TERM_DAYS INT,
+NUMBER_CLIENT_Traning INT,
+BALANCE INT,
+DELETE_BOOLEAN BOOLEAN
+);
+
+
+CREATE TABLE newIdService (
+nameVal TEXT,
+    ipVal INT
+);
+
+
+INSERT INTO newIdService (ipVal, nameVal) VALUES (1, 'service');
+
+SELECT * FROM newIdService;
+
+
+DROP TABLE historyClients;
+
+CREATE TABLE historyClients(
+operatinNumber INT,
+opirationDate TEXT,
+operationTime TEXT,
+idUser INT,
+nameUser TEXT,
+idTrainer INT,
+nameTrainer TEXT,
+idClient INT,
+nameClient TEXT,
+idService INT,
+nameService TEXT,
+numberVisits INT,
+termDays INT,
+idTypeOperation INT,
+nameOperation INT,
+numberVisitsRemainder INT,
+idTypeClient INT,
+delBoolean BOOLEAN
+);
+
+DROP TABLE Trainers;
+
+CREATE TABLE Trainers(
+idTrainer INT,
+idClientThisTrainer INT,
+idTypeTrainer INT,
+balance INT,
+del BOOLEAN
+);
+
+
+DROP TABLE Users;
+
+CREATE TABLE Users(
+idUser INT,
+nameUser TEXT,
+loginUser TEXT,
+passwordUser INT,
+authUser BOOLEAN
+);
+
+INSERT INTO Users 
+       (idUser, nameUser, loginUser, passwordUser, authUser) 
+VALUES (1, 'Кутькин Р.И.', 'developer', 1743287869, true );
+
+
+
+
+SELECT * FROM Users;
+UPDATE Users SET authUser = false WHERE idUser = 1;.
+UPDATE Users SET authUser = true WHERE idUser = 1;
+
+ALTER TABLE Название_таблицы
+ADD COLUMN Название_добавляемой_колонки Тип_колонки_и_значение_по_умолчанию 
+AFTER Добавить_после_указанной_колонки;
+
+
+ALTER TABLE Users ADD COLUMN savePassword TEXT AFTER authUser
+
+CREATE TABLE Config(
+idConfig INT, 
+nameConfig TEXT,
+valConfig TEXT
+);
+
+INSERT INTO Config (idConfig, nameConfig, valConfig) VALUES (1, 'DATE', '15.05.2021');
+INSERT INTO Config (idConfig, nameConfig, valConfig) VALUES (2, 'Time', '11:05:35');
+
+
+
+
+UPDATE Config SET valConfig = '0' WHERE idConfig = 2;
+DROP TABLE Config;
+
+
+
+CREATE TABLE telegram(
+id_client INT, 
+id_telegram TEXT,
+status TEXT
+);
+
+
+ALTER TABLE telegram ADD COLUMN deleteCheck boolean TEXT AFTER DateTimeReg
+
+
+INSERT INTO telegram (id_telegram, status) VALUES ('1623901137', 'admin');
+INSERT INTO telegram (id_telegram, status) VALUES ('1623901137', 'developer');
+
+UPDATE telegram SET id_telegram = ' ', codReg = '3333' WHERE id_telegram = '1623901137';
+
+    ID Elena <<<<<<<<<<<<<<<<<<<<<<<<<<
+INSERT INTO telegram (id_telegram, status) VALUES ('1456567595', 'admin');
+
+/devSQL@DELETE FROM telegram WHERE id_telegram=000000;
+
+/devSQL@INSERT INTO telegram (id_telegram, status) VALUES ('000000', 'admin');
+
+-Влад
+INSERT INTO telegram (id_telegram, status) VALUES ('1562264526', 'admin');
+   
+use datebasespartak;
+
+
+
+
+
+use datebasespartak;
+
+DROP TABLE ServicePrice;
+
+create table ServicePrice(
+ID_SERVICE int unsigned NOT NULL AUTO_INCREMENT COMMENT,
+ID_TYPE INT,
+ID_GROUP INT,
+NAME TEXT,
+COST DOUBLE,
+DELETE_CHECK BOOLEAN,
+BALANCE INT,
+NUMBER_VISITS INT,
+TERM_DAYS INT,
+NUMBER_CLIENTS INT,
+Type_tren TEXT);
+
+use datebasespartak;
+DROP TABLE ServicePrice;
+
+CREATE TABLE IF NOT EXISTS `datebasespartak`.`serviceprice` (
+  `ID_SERVICE` INT NOT NULL AUTO_INCREMENT,
+  `ID_TYPE` INT NULL DEFAULT NULL,
+  `ID_GROUP` INT NULL DEFAULT NULL,
+  `NAME` TEXT NULL DEFAULT NULL,
+  `COST` DOUBLE NULL DEFAULT NULL,
+  `DELETE_CHECK` TINYINT(1) NULL DEFAULT 0,
+  `BALANCE` INT NULL DEFAULT 999999,
+  `NUMBER_VISITS` INT NULL DEFAULT 0,
+  `TERM_DAYS` INT NULL DEFAULT 0,
+  `NUMBER_CLIENTS` INT NULL DEFAULT 1,
+  `Type_tren` TEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`ID_SERVICE`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+ALTER TABLE serviceprice ADD COLUMN sumTren DOUBLE AFTER Type_tren;
+
+
+ALTER TABLE serviceprice ADD COLUMN timeControl boolean AFTER sumTren;
+ALTER TABLE serviceprice ADD COLUMN addSumTimeControl DOUBLE AFTER timeControl;
+ALTER TABLE serviceprice ADD COLUMN idTre INT AFTER addSumTimeControl;
+
+
+ALTER TABLE serviceprice RENAME COLUMN timeConttrol TO timeControl;
+
+CREATE TABLE controlDate(
+date TEXT, 
+status TEXT
+);
+
+
+
+
+DROP TABLE IF EXISTS `datebasespartak`.`trainers` ;
+
+CREATE TABLE IF NOT EXISTS `datebasespartak`.`trainers` (
+  `idTrainer` INT NOT NULL AUTO_INCREMENT,
+  `idClientThisTrainer` INT NOT NULL,
+  `idTypeTrainer` INT NULL DEFAULT 0,
+  `balance` INT NULL DEFAULT 0,
+  `del` TINYINT(1) NULL DEFAULT 0,
+  PRIMARY KEY (`idTrainer`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+
+
+
+
+idService = ?	idServiceMain = ?	idType = ?	name = ?	cost = ?	deleteCheck = ?	balancePay = ?	numberVisitsPay = ?	termDay = ?	numberClients = ?	typeTrainer = ?	sumTrainer = ?	timeControl = ?	addSumTimeControl = ?	idTrainer = ?	idClient = ?	datePay = ?	timePay = ?	balance = ?	numberVisits = ?	actionCheck = ?	
+
+
+
+
+
+
+CREATE TABLE `datebasespartak`.`serviceprice` (
+  `idActionServiceHistory` INT NOT NULL AUTO_INCREMENT,
+  `idActionService` INT NULL DEFAULT NULL,
+  `idUser` INT NULL DEFAULT NULL,
+  `idTrainer` INT NULL DEFAULT NULL,
+  `nameHistory` TEXT NULL DEFAULT NULL,
+  `time` TEXT NULL DEFAULT NULL,
+  `date` TEXT NULL DEFAULT NULL,
+  `valueVisits` INT NULL DEFAULT NULL,
+  `sumTrainers` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`idActionServiceHistory`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+
+

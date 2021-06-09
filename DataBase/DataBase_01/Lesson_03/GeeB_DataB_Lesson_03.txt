@@ -64,6 +64,8 @@ where salary = (select max(salary) from salaries));
 
 43624	d007	1985-03-26	9999-01-01	43624	158220	2002-03-22	9999-01-01
 
+
+# Задание 1
 use geodata;
 
 # Задание 1.1
@@ -82,9 +84,9 @@ where region_id = (select region_id from _regions where title_ru like 'Моск�
 #
 
 
-
+# Задание 2
 use employees;
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 # Задание 2.1
 # Выбрать среднюю зарплату по отделам + (номер и наименование отдела)
 select round(AVG(salary),2), dept_emp.dept_no, departments.dept_name from salaries as t_sal 
@@ -105,11 +107,10 @@ GROUP BY dept_emp.dept_no;
 select max(salary), employees.first_name, employees.last_name, employees.birth_date from salaries as t_sal
 left join dept_emp on dept_emp.emp_no = t_sal.emp_no and dept_emp.to_date = '9999-01-01'
 left join employees on dept_emp.emp_no = employees.emp_no  
-;
+# 
 
 # Задание 2.3
-# Удалить одного сотрудника, у которого максимальная зарплата(Применение подзапросов обязательно,
-# сотрудник должен быть не уволенным, и удалить мы должны одного сотрудника.
+# Удалить одного сотрудника, у которого максимальная зарплата
 delete from employees
 where emp_no = (select emp_no from salaries 
 where salary = (select max(salary) from salaries) and to_date = '9999-01-01');
@@ -120,16 +121,6 @@ where salary = (select max(salary) from salaries) and to_date = '9999-01-01');
 select dept_no, count(emp_no) from dept_emp 
 where to_date = '9999-01-01' group by dept_no;
 #
-d001	14842
-d002	12437
-d003	12898
-d004	53304
-d005	61386
-d006	14545
-d007	37700
-d008	15441
-d009	17569
-
 
 # Задание 2.5
 select dept_emp.dept_no, departments.dept_name, count(dept_emp.emp_no), sum(salaries.salary)  from dept_emp 
@@ -140,13 +131,4 @@ and salaries.to_date = '9999-01-01'
 group by dept_emp.dept_no;
 #
 
-d005	Development	61386	4153249050
-d007	Sales	37700	3349687582
-d004	Production	53304	3616319369
-d003	Human Resources	12898	824464664
-d008	Research	15441	1048650423
-d006	Quality Management	14545	951824827
-d001	Marketing	14842	1188233434
-d009	Customer Service	17569	1182134209
-d002	Finance	12437	977049936
 

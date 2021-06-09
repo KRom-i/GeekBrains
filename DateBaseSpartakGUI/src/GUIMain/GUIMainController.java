@@ -1,20 +1,23 @@
 package GUIMain;
 
 
+import ControlOperation.Check;
 import GUIMain.CustomStage.*;
 import Bot.BotTelegram;
 import Cash.CashBook;
 import Cash.NodeViewHistory;
-import Cash.Transaction;
 import Format.DateTime;
 import GUIMain.CustomStage.DialogDateInit;
 import Logger.LOG;
 import MySQLDB.ServerMySQL;
-import Services.ActionService;
-import Services.Service;
+import Services.ActionServices.ActionService;
+import Services.ImroptExcel.ServiceImport;
 import Services.StageService.*;
 import WorkDataBase.*;
 import WorkDataBase.AuthUser.DialogAuth;
+import WorkDataBase.Clients.ClientStage;
+import WorkDataBase.Clients.NewClientStage;
+import WorkDataBase.Trainers.TrainerList;
 import WorkDataBase.User.DialogAddNewUser;
 import WorkDataBase.User.DialogUserEdit;
 import javafx.application.Platform;
@@ -25,17 +28,16 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.telegram.telegrambots.ApiConstants;
-import org.telegram.telegrambots.ApiContext;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import СustomTitlePanel.ChoiceTitlePanel;
-import СustomTitlePanel.EditServicesTitlePanel;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -46,6 +48,12 @@ import java.util.concurrent.Executors;
 public class GUIMainController {
 
 
+    public VBox vBoxListClients;
+    public ListView listViewBalanceTrainers;
+    public HBox hBoxBalanceCashBook;
+    public HBox vBoxActionService;
+    @FXML
+    private ListView listViewEditServices;
     @FXML
     private TextField textFieldBirthDay;
     @FXML
@@ -69,7 +77,7 @@ public class GUIMainController {
     @FXML
     private HBox hBoxFindClient;
     @FXML
-    private  VBox vBoxChoiceService;
+    private VBox vBoxChoiceService;
     @FXML
     private ListView<HBox> listViewListClients;
     @FXML
@@ -100,26 +108,13 @@ public class GUIMainController {
     private TextField textLastName;
     @FXML
     private TextField textPatronymicName;
-    private List<ClientClass> clientClassList;
+    private static List<ClientClass> clientClassList;
     private ClientClass clientClassActive;
     
     public void initialize() {
 
-//        ServerMySQL.getConnection ();
-        clientClassList = ClientDataBase.newListClient();
-
-//        textFieldEdit(false,
-//                textInfoClient,
-//                textFirtsName,
-//                textLastName,
-//                textPatronymicName,
-//                textTelephone,
-//                textDateBirth,
-//                textEmail);
 
 
-        new ChoiceTitlePanel(vBoxChoiceService, 5);
-        new EditServicesTitlePanel(vBoxEditServices, 5);
 
         new LabelInfo(panelUserInterface);
 
@@ -127,15 +122,32 @@ public class GUIMainController {
 
         NodeViewHistory.init (listViewHistoryTran);
 
-        updateListClients();
-//        Platform.runLater (()->{
-//            new StageNewService (listViewHistoryTran);
-//
-//        });
+        new ActionService(vBoxActionService);
 
-        initBot ();
 
-        ServerMySQL.getConnectionNameDateBase ("cities_info");
+        try {
+            ImageView imageView = new ImageView(new Image(new File("img/logo/search.gif").toURI().toURL().toString()));
+            imageView.setFitHeight(40);
+            imageView.setFitWidth(50);
+            hBoxFindClient.getChildren().add(imageView);
+            hBoxFindClient.getStyleClass().add("box-class");
+        } catch (Exception e){e.printStackTrace();}
+
+
+        new TrainerList(listViewBalanceTrainers);
+        TrainerList.updateListView();
+
+        new CashBook(hBoxBalanceCashBook);
+        CashBook.updateBoxBalanceCashBook();
+
+        Platform.runLater (()->{
+            ServiceImport serviceImport = new ServiceImport (vBoxChoiceService, listViewEditServices);
+            serviceImport.readDataBase (false);
+            serviceImport.updateVbox (0, 0,0);
+
+        });
+
+            initBot ();
 
     }
 
@@ -190,23 +202,55 @@ public class GUIMainController {
     public static BotTelegram bot;
 
     public void initBot() {
-        try {
-            ApiContextInitializer.init();
-        }   catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        try {
-            telegramBotsApi = new TelegramBotsApi();
-        }   catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            bot = new BotTelegram ();
-            telegramBotsApi.registerBot (bot);
-        }   catch (Exception e) {
-            e.printStackTrace();
-        }
+
+
+        new Thread(()->{
+            int check = 0;
+            while (true) {
+
+                if (new Check().netIsAvailable()) {
+
+                    try {
+                        ApiContextInitializer.init();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        telegramBotsApi = new TelegramBotsApi();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        bot = new BotTelegram();
+                        telegramBotsApi.registerBot(bot);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Platform.runLater(()->{
+                        new InfoStage("Соединение с интернетом установлено");
+                    });
+                    break;
+                } else {
+                    check++;
+                    Platform.runLater(()->{
+                        new WarningStage("Отсутвует соединение с интернетом");
+                    });
+                }
+
+                try {
+                    if (check < 10){
+                        Thread.sleep(30000);
+                    } else {
+                        Thread.sleep(60000 * 5);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }).start();
 
     }
 
@@ -311,7 +355,7 @@ public class GUIMainController {
             }
         }
 
-        clientClassList = ClientDataBase.newListClient();
+
     }
 
 
@@ -358,26 +402,7 @@ public class GUIMainController {
 
         ActionClient.setClient(null) ;
         actionEditClientData = false;
-//        textFieldEdit(false,
-//                textInfoClient,
-//                textFirtsName,
-//                textLastName,
-//                textPatronymicName,
-//                textTelephone,
-//                textDateBirth,
-//                textEmail);
-//        vBOXEditClient.setOpacity(0.3);
-//        clearTextFields(
-//                textFirtsName,
-//                textLastName,
-//                textPatronymicName,
-//                textTelephone,
-//                textDateBirth,
-//                textEmail);
-//        textInfoClient.clear();
-//        setVisibleEndManaged(false, btnSaveEdit, ButtonCancelEditDateClient, buttonOrderService);
-//        setVisibleEndManaged(true, ButtonEditDateClient, ButtonDelClient);
-//        nodesOpacity(1, textFieldFind, buttonFindClient, buttonGuest, buttonListClients, buttonNewClient);
+
         if (!findAction
                 && !textFieldFind.getText ().startsWith (" ")
                 && textFieldFind.getText ().length () > 1){
@@ -388,6 +413,9 @@ public class GUIMainController {
             });
 
             findAction = true;
+
+            clientClassList = ClientDataBase.newListClient();
+
             findClientThread.submit (()->{
                 while (true){
 
@@ -400,10 +428,14 @@ public class GUIMainController {
                         e.printStackTrace();
                     }
 
+                    int lengthStr = textFieldFind.getText ().length ();
+
                     if (textFieldFind.getText ().startsWith (" ")
                             || textFieldFind.getText ().length () <= 2){
                         Platform.runLater (()->{
-                            contextMenu.getItems ().clear ();
+                            if (contextMenu != null){
+                                contextMenu.getItems ().clear ();
+                            }
                         });
                         findAction = false;
                         break;
@@ -419,11 +451,15 @@ public class GUIMainController {
                         }
 
                         if (!clientClassListFind.isEmpty()){
-                            menuReturnFind(clientClassListFind);
+                            menuReturnFind(clientClassListFind, lengthStr);
                         } else {
                             Platform.runLater (()->{
-                                contextMenu.getItems ().clear ();
+                                if (contextMenu != null){
+                                    contextMenu.getItems ().clear ();
+                                }
+
                                 textFieldFind.setStyle("-fx-background-color: #FF6347;");
+                                contextMenuAddNewUser(lengthStr);
                             });
                         }
                         findAction = false;
@@ -442,16 +478,55 @@ public class GUIMainController {
 
     }
 
-    ContextMenu contextMenu = new ContextMenu ();
+    ContextMenu contextMenu;
+
+    private void contextMenuAddNewUser(int lengthStr){
+        Platform.runLater (()->{
+                               if (contextMenu != null){
+                                   contextMenu.getItems ().clear ();
+                               }
+                               contextMenu = new ContextMenu ();
+                               textFieldFind.setContextMenu (contextMenu);
+                               contextMenu.setStyle("-fx-max-width: 670;");
+                               contextMenu.setStyle("-fx-min-width: 670;");
+                               contextMenu.setStyle("-fx-max-height: 300;");
+
+                               MenuItem item =  new MenuItem("Добавить нового клиента");
+            item.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle (ActionEvent event) {
+                    new NewClientStage(panelUserInterface, textFieldFind.getText());
+                }
+            });
+                contextMenu.getItems ().add (item);
+
+
+            Stage stage = (Stage) textFieldFind.getScene ().getWindow ();
+
+            double x = stage.getX ();
+            double y = stage.getY ();
+
+            double nodeLength = (hBoxWorkClient.getWidth()) / 2;
+
+            double xMenu = x + (nodeLength - (lengthStr * 5));
+            double yMenu = y + 215;
+
+            contextMenu.show (stage, xMenu,yMenu);
+
+        });
+    }
 
 //   contextMenu  при поиске клиента;
-    private void menuReturnFind(List<ClientClass> clientClassListFind){
+    private void menuReturnFind(List<ClientClass> clientClassListFind, int lengthStr){
 
         Platform.runLater (()->{
-
-            contextMenu.getItems ().clear ();
+            if (contextMenu != null){
+                contextMenu.getItems ().clear ();
+            }
+            contextMenu = new ContextMenu ();
             textFieldFind.setContextMenu (contextMenu);
-            contextMenu.setStyle("-fx-max-width: 300;");
+            contextMenu.setStyle("-fx-max-width: 670;");
+            contextMenu.setStyle("-fx-min-width: 670;");
             contextMenu.setStyle("-fx-max-height: 300;");
 
             MenuItem[] items =  new MenuItem[clientClassListFind.size ()];
@@ -483,13 +558,14 @@ public class GUIMainController {
             double ww = w / 2;
             double hh = h / 2;
 
-            double nodeLength = (vBoxFindClient.getWidth()) / 2;
+            double nodeLength = (hBoxWorkClient.getWidth()) / 2;
 
-            double xMenu = x + ww - nodeLength + 200;
-            double yMenu = y + 220;
+
+            double xMenu = x + (nodeLength - (lengthStr * 5));
+            double yMenu = y + 215;
 
             contextMenu.show (stage, xMenu,yMenu);
-//            argsPrint(x,y,w,h,ww,hh,xMenu,yMenu);
+
         });
 
     }
@@ -503,38 +579,6 @@ public class GUIMainController {
     }
 
 
-//    Выводим найденного клиента для дальнейшего взаимодействия
-    private void rutFindClient(ClientClass clientClass){
-
-//        textFieldFind.setText("");
-//        actionEditClientData = false;
-//        textLastName.setText(clientClass.getFirstName());
-//        textFirtsName.setText(clientClass.getLastName());
-//        textPatronymicName.setText(clientClass.getPatronymicName());
-//        textTelephone.setText(clientClass.getTelephone());
-//        textDateBirth.setText(clientClass.getDateBirth());
-//        textEmail.setText(clientClass.getEmail());
-//        textInfoClient.setText(clientClass.getInfoClient());
-
-//        textFieldEdit(false,
-//                textInfoClient,
-//                textFirtsName,
-//                textLastName,
-//                textPatronymicName,
-//                textTelephone,
-//                textDateBirth,
-//                textEmail);
-//        setVisibleEndManaged(false, btnSaveEdit, ButtonCancelEditDateClient);
-//        setVisibleEndManaged(true, ButtonEditDateClient, ButtonDelClient, buttonOrderService);
-//        vBOXEditClient.setOpacity(1);
-//        setVisibleEndManaged(false, listViewListClients);
-//        nodesOpacity(0.5, textFieldFind, buttonFindClient, buttonGuest, buttonListClients, buttonNewClient);
-//        nodesOpacity(0.8, textFirtsName, textLastName, textPatronymicName, textTelephone, textDateBirth,
-//                     textInfoClient, textEmail);
-//        nodesOpacity(1, buttonOrderService);
-//        vBoxFindClient.setManaged(false);
-//        vBoxFindClient.setVisible(false);
-    }
 
 //    Запрет на редактирование TextField (args)
     private void textFieldEdit(boolean booleanEdit, TextArea textArea, TextField... textFields){
@@ -545,39 +589,7 @@ public class GUIMainController {
         }
     }
 
-//    Clear TextFields
 
-    private void clearTextFields(TextField... textFields){
-
-        for(TextField tf: textFields
-        ) {
-            tf.setText("");
-        }
-    }
-
-//    Метод улаляет клиента
-    public void methodDelClient (ActionEvent actionEvent){
-
-        if (ActionClient.getClient() != null){
-            ClientDataBase.delClient(ActionClient.getClient());
-            ActionClient.setClient(null) ;
-//            clearTextFields(
-//                    textFirtsName,
-//                    textLastName,
-//                    textPatronymicName,
-//                    textTelephone,
-//                    textDateBirth,
-//                    textEmail);
-//            textInfoClient.setText("");
-//            clientClassList = ClientDataBase.newListClient();
-//            vBOXEditClient.setOpacity(0.3);
-        }
-//        setVisibleEndManaged(false, btnSaveEdit, ButtonCancelEditDateClient);
-//        setVisibleEndManaged(true, ButtonEditDateClient, ButtonDelClient);
-//        setVisibleEndManaged(false, listViewListClients);
-        methodFindClientDataBase();
-
-    }
 
 //    Action nodes
     private void setVisibleEndManaged(boolean booleanVal, Node... nodes){
@@ -654,42 +666,9 @@ public class GUIMainController {
     public void openEditVboxNewClient (ActionEvent actionEvent){
 
         ActionClient.setClient(null);
+        new NewClientStage(panelUserInterface);
         
-//        clearTextFields(
-//                textFirtsName,
-//                textLastName,
-//                textPatronymicName,
-//                textTelephone,
-//                textDateBirth,
-//                textEmail);
-//        textInfoClient.clear();
-//        if (textFieldFind.getText().length() > 0){
-//            String[] s = textFieldFind.getText().split(" ",3);
-//            for(int i = 0; i < s.length; i++) {
-//                if (i == 0){
-//                    textFirtsName.setText(editText(s[i]));
-//                } else if (i == 1){
-//                    textLastName.setText(editText(s[i]));
-//                } else if (i == 2){
-//                    textPatronymicName.setText(editText(s[i]));
-//                }
-//            }
-//            textFieldFind.clear();
-//        }
-//        setVisibleEndManaged(true, btnSaveEdit, vBOXEditClient);
-//        setVisibleEndManaged(false, ButtonEditDateClient, ButtonDelClient, buttonOrderService, listViewListClients);
-//        textFieldEdit(true,
-//                textInfoClient,
-//                textFirtsName,
-//                textLastName,
-//                textPatronymicName,
-//                textTelephone,
-//                textDateBirth,
-//                textEmail);
-//        vBOXEditClient.setOpacity(1);
-//        nodesOpacity(0.5, textFieldFind, buttonFindClient, buttonGuest, buttonListClients);
-//        nodesOpacity(1, textFirtsName, textLastName, textPatronymicName, textTelephone, textDateBirth,
-//                     textInfoClient, textEmail);
+
 
 
     }
@@ -700,6 +679,7 @@ public class GUIMainController {
 
     //    Оформление услуги
     public void methodOrderService () {
+
         if (ActionClient.getClient() != null) {
             if (!actionEditClientData){
                 textFieldNameClient.setText (ActionClient.getClient ().toStringIteam ());
@@ -707,36 +687,42 @@ public class GUIMainController {
 //            setVisibleEndManaged(false, vBOXEditClient);
             setVisibleEndManaged(false, vBoxFindClient);
             setVisibleEndManaged(true, vBoxOrderService);
-            setVisibleEndManaged(false, listViewListClients);
+            setVisibleEndManaged(false, vBoxListClients);
+
+                ActionService.updateHBoxGUIInfo();
+
             }
         }
     }
 
     //    Отмена оформления новой услуги
-    public void methodCancelOrderService (ActionEvent actionEvent) {
+    public void methodCancelOrderService () {
 //        setVisibleEndManaged(true, vBOXEditClient);
         setVisibleEndManaged(true, vBoxFindClient);
         setVisibleEndManaged(false, vBoxOrderService);
-        setVisibleEndManaged(false, listViewListClients);
+        setVisibleEndManaged(false, vBoxListClients);
+        vBoxActionService.getChildren().clear();
     }
 
 
     public void openListClients (ActionEvent actionEvent){
-        setVisibleEndManaged(true, listViewListClients);
-//        setVisibleEndManaged(false, vBOXEditClient, buttonOrderService);
-//        setVisibleEndManaged(false, vBoxOrderService);
-//        nodesOpacity(1, buttonListClients);
-//        nodesOpacity(0.5, textFieldFind, buttonFindClient, buttonGuest, buttonNewClient);
+        updateListClients();
+        setVisibleEndManaged(true, vBoxListClients);
 
     }
 
 
     public void updateListClients(){
         Platform.runLater(()->{
+
+            clientClassList = ClientDataBase.newListClient();
+
             listViewListClients.getItems().clear();
             for(int i = 0; i < clientClassList.size(); i++) {
                 listViewListClients.getItems().add(clientClassList.get(i).infoHBox ());
             }
+
+
         });
     }
 
@@ -756,6 +742,9 @@ public class GUIMainController {
 
         AuthUserDateBase.editUserAuth(ActionUser.getUser ().getLogin (), false);
         Platform.runLater (()->{
+            methodCancelOrderService();
+            textFieldDateTameStart.clear();
+            textFieldNameUser.clear();
             new DialogAuth (panelUserInterface, textFieldDateTameStart, textFieldNameUser);
         });
 
@@ -771,7 +760,7 @@ public class GUIMainController {
 
     public void initCashBookNull(ActionEvent actionEvent) {
         CashBook.clearCashBook();
-        restart();
+         new WarningStage("Необходимо перезапустить приложение.");
     }
 
     public void restart(){
@@ -805,25 +794,33 @@ public class GUIMainController {
         methodOrderService ();
     }
 
+    public void initStageNewService (ActionEvent actionEvent) {
+        new StageNewService(panelUserInterface);
+    }
 
-//
-//    private Transaction transactionEnd;
-//    public static List<Service> list = new ArrayList<>();
-//
-//    public void methodNewTransaction(ActionEvent actionEvent) {
-//        for (int i = 0; i < list.size(); i++) {
-//
-//            Transaction transaction = new Transaction(1,
-//                    list.get(i), ActionClient.getClient(),
-//                    new UserSpartak(111,"Roman", "log", 1234, true), 1);
-//            if (transactionEnd == null){
-//                transactionEnd = transaction;
-//            } else {
-//                transaction.balanceCalculation(transactionEnd);
-//            }
-//            LOG.info (transaction.toString());
-//        }
-//        list.clear();
-//        list = new ArrayList<>();
-//    }
+    public void infoStageClient (ActionEvent actionEvent) {
+        if (ActionClient.getClient() != null){
+            if (ActionClient.getClient().getId() > 0){
+                new ClientStage(panelUserInterface, ActionClient.getClient());
+            }
+        }
+
+    }
+
+    public void closeListClients (ActionEvent actionEvent) {
+        setVisibleEndManaged(false, vBoxListClients);
+    }
+
+    public void openDateControlService (ActionEvent actionEvent) {
+
+        new DateControlService(panelUserInterface);
+    }
+
+    public void testTimeControl (ActionEvent actionEvent) {
+
+        System.out.println("Контроль веремени: " + new DateTime().checkTime());
+    }
+
+
+
 }

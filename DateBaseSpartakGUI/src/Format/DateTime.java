@@ -1,5 +1,6 @@
 package Format;
 
+import GUIMain.CustomStage.DateControlService;
 import GUIMain.CustomStage.SystemErrorStage;
 import Logger.LOG;
 import MySQLDB.ServerMySQL;
@@ -41,7 +42,6 @@ public class DateTime {
 //    На день вперед
     public void upDay(){
         long time = 86400000;
-        System.out.println (time);
         try {
             SimpleDateFormat format = new SimpleDateFormat();
             format.applyPattern("dd.MM.yyyy");
@@ -57,14 +57,12 @@ public class DateTime {
 
     private String upTime(){
         long time = Long.valueOf (getTime ()) * 60000;
-        System.out.println (time);
         try {
             SimpleDateFormat format = new SimpleDateFormat();
             format.applyPattern("HH:mm:ss");
-            Date docDate= format.parse(new DateTime ().currentTime2());
+            Date docDate = format.parse(new DateTime ().currentTime2());
             docDate.setTime (docDate.getTime () + time);
             return new SimpleDateFormat("HH:mm:ss").format(docDate);
-
         } catch (ParseException e) {
             e.printStackTrace ();
         }
@@ -83,11 +81,79 @@ public class DateTime {
     }
 
 
+    public int getDaysDatePay(String date){
 
+        int days = 0;
+
+        try {
+
+            SimpleDateFormat format = new SimpleDateFormat();
+            format.applyPattern("dd.MM.yyyy");
+
+            Date docDate= format.parse(new DateTime ().currentDate ());
+
+            Date docDate2 = format.parse(date);
+
+            long l = (docDate.getTime () - docDate2.getTime ()) / 86400000;
+            days = (int) l;
+
+        } catch (ParseException e) {
+            e.printStackTrace ();
+        }
+
+        return days;
+    }
+
+    public String getDateLast(String datePay, int days){
+
+        long time = (long) days * 86400000;
+
+        try {
+            SimpleDateFormat format = new SimpleDateFormat();
+            format.applyPattern("dd.MM.yyyy");
+            Date docDate= format.parse(datePay);
+            docDate.setTime (docDate.getTime () + time);
+
+            return new SimpleDateFormat("dd.MM.yyyy").format(docDate);
+
+        } catch (ParseException e) {
+            e.printStackTrace ();
+        }
+
+        return "";
+    }
+
+    public static void main (String[] args) {
+
+        System.out.println("Текущая дата " + new DateTime().currentDate());
+
+        String datePay = "09.05.2021";
+        int days = 31;
+
+        System.out.println("Дата покупки " + datePay + "  срок в днях " + days);
+
+        int getIntDaysDatePay = new DateTime().getDaysDatePay(datePay);
+        System.out.println("Прошло дней c момента покупки: " + getIntDaysDatePay);
+
+        String getStringDateLast = new DateTime().getDateLast(datePay ,days);
+        System.out.println("Дествителен до : " + getStringDateLast);
+
+        if (days <= getIntDaysDatePay){
+            System.out.println("Осталось дней : " + (days - getIntDaysDatePay));
+        } else {
+            System.out.println("Срок действия истек");
+        }
+
+    }
 
     public String dateFormatMMyyyy(){
         //        return new SimpleDateFormat("MM.yyyy").format(new Date());
         return getDate ().substring (3,10);
+    }
+
+    public String dateFormatYyyy(){
+        //        return new SimpleDateFormat("MM.yyyy").format(new Date());
+        return getDate ().substring (6,10);
     }
 
 
@@ -113,6 +179,49 @@ public class DateTime {
             ServerMySQL.statementClose(statement);
 
         }
+    }
+
+    public boolean checkTime(){
+
+        try {
+        SimpleDateFormat format = new SimpleDateFormat();
+        format.applyPattern("HH:mm");
+        Date timeControl = format.parse(DateControlService.getTimeControl());
+        LOG.info(String.format("Ограничение по времени [%s]  long value [%s]", DateControlService.getTimeControl(), timeControl.getTime()));
+
+        SimpleDateFormat format1 = new SimpleDateFormat();
+        format1.applyPattern("HH:mm:ss");
+        Date time = format1.parse(currentTime());
+        LOG.info(String.format("Текущее время [%s]  long value [%s]",currentTime(), time.getTime()));
+
+        if (time.getTime() < timeControl.getTime()){
+            return true;
+        } else {
+
+            SimpleDateFormat format3 = new SimpleDateFormat();
+            format3.applyPattern("dd.MM.yyyy");
+            Date date = format3.parse(new DateTime ().currentDate ());
+
+            String numberDay = new SimpleDateFormat("u").format(date);
+            int day = Integer.valueOf(numberDay);
+
+            LOG.info(String.format("Текущая дата [%s]  номер дня недели [%s]", new DateTime ().currentDate (), day));
+
+            if (day < 6){
+                return  DateControlService.getDayControl(new DateTime ().currentDate (), "Выходной день");
+            } else {
+                if (!DateControlService.getDayControl(new DateTime ().currentDate (), "Рабочий день")){
+                    return  true;
+                }
+            }
+        }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        return false;
     }
 
 

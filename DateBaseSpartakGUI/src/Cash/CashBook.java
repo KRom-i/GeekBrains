@@ -13,12 +13,20 @@ import Services.Subscription;
 import WorkDataBase.ActionUser;
 import WorkDataBase.ClientClass;
 import WorkDataBase.UserSpartak;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import sun.awt.windows.ThemeReader;
+
 
 import java.io.*;
 import java.sql.PreparedStatement;
@@ -37,6 +45,7 @@ public class CashBook {
     String thisNameEng = "CashBook";
     String inDirCashBooK = "FilesXLS/In/CashBook";
     static String inDirCashBooKStatic = "FilesXLS/In/CashBook";
+
 
     String[][] fieldsName = {{
             "Номер кассовой операции", "Дата операции", "Время операции",
@@ -65,6 +74,8 @@ public class CashBook {
 
     }};
 
+    public CashBook () {
+    }
 
     public void writeFileTran (Transaction transaction) {
         String nameFile = "Касса-" + new SimpleDateFormat ("yyyy-MM-dd").format (new Date ()) + ".csv";
@@ -81,7 +92,7 @@ public class CashBook {
                     file.createNewFile ();
                 } catch (IOException e) {
                     e.printStackTrace ();
-new SystemErrorStage (e);
+                    new SystemErrorStage (e);
                 }
 
             }
@@ -96,7 +107,7 @@ new SystemErrorStage (e);
 
         } catch (Exception e) {
             e.printStackTrace ();
-new SystemErrorStage (e);
+                    new SystemErrorStage (e);
         }
 
     }
@@ -180,7 +191,7 @@ new SystemErrorStage (e);
 
         } catch (SQLException e) {
             e.printStackTrace ();
-new SystemErrorStage (e);
+                    new SystemErrorStage (e);
         } finally {
             ServerMySQL.statementClose (statement);
             ServerMySQL.resultSetClose (rs);
@@ -214,7 +225,7 @@ new SystemErrorStage (e);
 
         } catch (SQLException e) {
             e.printStackTrace ();
-new SystemErrorStage (e);
+                    new SystemErrorStage (e);
         } finally {
             ServerMySQL.statementClose (statement);
 
@@ -230,11 +241,21 @@ new SystemErrorStage (e);
         try {
             statement = ServerMySQL.getConnection ().prepareStatement ("TRUNCATE TABLE CashBook");
             statement.executeUpdate ();
-            addTransactionToCashBookDataBase (new Transaction ());
+            Transaction t = new Transaction();
+            t.setNameTransaction("Обнуление кассовой книги");
+            t.setIdUser(ActionUser.getUser().getId());
+            t.setNameUser(ActionUser.getUser().getName());
+            addTransactionToCashBookDataBase (t);
             File file = new File (inDirCashBooKStatic);
             for (File f : file.listFiles ()
             ) {
-                f.delete ();
+                if (f.isDirectory()){
+                    for(File f2: f.listFiles()
+                        ) {
+                        f2.delete();
+                    }
+                    f.delete();
+                }
             }
             LOG.info  ("Обнуление кассовой книги");
         } catch (SQLException e) {
@@ -288,6 +309,49 @@ new SystemErrorStage (e);
 
         addTransactionToCashBookDataBase (t2);
         NodeViewHistory.update ();
+    }
+
+
+    private static HBox boxBalanceCashBook;
+
+    public CashBook (HBox boxBalanceCashBook) {
+        this.boxBalanceCashBook = boxBalanceCashBook;
+    }
+
+    public static void updateBoxBalanceCashBook(){
+        Platform.runLater(()->{
+            boxBalanceCashBook.getChildren().clear();
+            Transaction endT = getEndTransactionDataBase();
+
+            VBox vBoxBalanceMain = new VBox();
+            vBoxBalanceMain.setSpacing(5);
+            vBoxBalanceMain.setPadding(new Insets(5,5,5,5));
+
+            VBox vBoxBalance = new VBox();
+            vBoxBalance.setSpacing(5);
+            vBoxBalance.setPadding(new Insets(5,5,5,5));
+
+            Label labelCash = new Label("Отстаток в кассе");
+            TextField textFieldCash = new TextField(endT.getSumCashBalanceEnd() + "");
+            textFieldCash.setEditable(false);
+
+            Label labelNonCash = new Label("Отстаток р/c");
+            TextField textFieldNonCash = new TextField(endT.getSumNonCashBalanceEnd() + "");
+            textFieldNonCash.setEditable(false);
+
+
+            Label labelAllCash = new Label("Общий остаток");
+            TextField textFieldAllCash = new TextField(endT.getSumCashBalanceEnd() + "");
+            textFieldAllCash.setEditable(false);
+
+            vBoxBalance.getChildren().addAll(labelCash, textFieldCash, labelNonCash, textFieldNonCash, labelAllCash, textFieldAllCash);
+
+            vBoxBalanceMain.getStyleClass().add("box-class");
+            vBoxBalanceMain.getChildren().add(vBoxBalance);
+
+            boxBalanceCashBook.getChildren().add(vBoxBalanceMain);
+
+        });
     }
 
     //    Метод возвращает последнюю транзакцию из БД;
@@ -419,16 +483,26 @@ new SystemErrorStage (e);
 
 }
 
+
     //    Метод производит расчет транзакции
     public static void addTransactionToCashBook (Transaction t2) {
+
+
         Transaction t1 = CashBook.getEndTransactionDataBase ();
         t2.balanceCalculation (t1);
         addTransactionToCashBookDataBase (t2);
         NodeViewHistory.update ();
+
     }
 
     //    Метод добавляет транзакцию
-    private static boolean addTransactionToCashBookDataBase (Transaction t) {
+
+
+
+    private static void addTransactionToCashBookDataBase (Transaction t) {
+
+
+
 
         writeHistoryFileXls (t);
 
@@ -563,60 +637,72 @@ new SystemErrorStage (e);
                 new InfoStage ("Сохранение операции");
             }
             LOG.info ("Сохранение операции");
-            return true;
+
         } catch (SQLException e) {
             e.printStackTrace ();
             new SystemErrorStage (e);
         } finally {
             ServerMySQL.statementClose (statement);
         }
-        return false;
-    }
 
-
-    public static void main (String[] args) {
-
-
-        for (int i = 0; i < 160; i++) {
-
-        UserSpartak user = new UserSpartak (1, "admin", "log", 12345, false);
-        Service service = new Product ("УСЛУГИ.ТОВАР", 100, 10, 1);
-        ClientClass client = new ClientClass ();
-        client.setId (1234);
-        client.setLastName ("Иван");
-        client.setFirstName ("Иванов");
-        client.setPatronymicName ("Иванович");
-
-        ServerMySQL.getConnection ();
-        for (Transaction t: new Transaction[100]
-        ) {
-            t = new Transaction (1, service, client, user, 1 );
-            CashBook.addTransactionToCashBookNotGui (t);
-        }
-            new DateTime ().upDay();
-        }
-        ServerMySQL.disconnect ();
-
-
-//        ServerMySQL.getConnection ();
-//        addEndCashBookStrNull ();
-//        ServerMySQL.disconnect ();
-
-//        ServerMySQL.getConnection ();
-//        getListTranDay ("2021.05.21");
-//        ServerMySQL.disconnect ();
-
-
-//        newFileXlSCashBook(date, getListTranDay (date));
-//        addTranToCashBookXLS(date, new Transaction ());
-
+        updateBoxBalanceCashBook();
 
     }
+
+
+    public double getBalanceCash(){
+        return CashBook.getEndTransactionDataBase().getSumCashBalanceEnd();
+    }
+
+//    public static void main (String[] args) {
+//
+//
+//        for (int i = 0; i < 160; i++) {
+//
+//        UserSpartak user = new UserSpartak (1, "admin", "log", 12345, false);
+//        Service service = new Product ("УСЛУГИ.ТОВАР", 100, 10, 1);
+//        ClientClass client = new ClientClass ();
+//        client.setId (1234);
+//        client.setLastName ("Иван");
+//        client.setFirstName ("Иванов");
+//        client.setPatronymicName ("Иванович");
+//
+//        ServerMySQL.getConnection ();
+//        for (Transaction t: new Transaction[100]
+//        ) {
+//            t = new Transaction (1, service, client, user, 1 );
+//            CashBook.addTransactionToCashBookNotGui (t);
+//        }
+//            new DateTime ().upDay();
+//        }
+//        ServerMySQL.disconnect ();
+//
+//
+////        ServerMySQL.getConnection ();
+////        addEndCashBookStrNull ();
+////        ServerMySQL.disconnect ();
+//
+////        ServerMySQL.getConnection ();
+////        getListTranDay ("2021.05.21");
+////        ServerMySQL.disconnect ();
+//
+//
+////        newFileXlSCashBook(date, getListTranDay (date));
+////        addTranToCashBookXLS(date, new Transaction ());
+//
+//
+//    }
 
     //    Запись транзпкции в файл
     private static void writeHistoryFileXls (Transaction t) {
 
-        String path = String.format ("%s//Касса_%s.xls", inDirCashBooKStatic, new DateTime ().dateFormatMMyyyy ());
+        File filePath = new File(String.format("%s//%s", inDirCashBooKStatic, new DateTime().dateFormatYyyy()));
+        if (!filePath.exists()){
+            filePath.mkdirs();
+        }
+
+        String path = String.format ("%s//%s//Касса_%s.xls", inDirCashBooKStatic,
+                                     new DateTime().dateFormatYyyy(), new DateTime ().dateFormatMMyyyy ());
         File file = new File (path);
         if (!file.exists ()) {
             creatFile (file);

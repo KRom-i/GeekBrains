@@ -4,6 +4,7 @@ import Format.DateTime;
 import GUIMain.CustomStage.ErrorStage;
 import GUIMain.CustomStage.InfoStage;
 import GUIMain.CustomStage.SystemErrorStage;
+import GUIMain.Styles.CssUrl;
 import WorkDataBase.AuthUserDateBase;
 import WorkDataBase.UserSpartak;
 import javafx.application.Platform;
@@ -13,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
@@ -48,6 +50,7 @@ public class DialogAddNewUser {
         newWindow.setTitle("Добавить нового пользователя");
 
         Scene scene = new Scene(stackPane);
+        scene.getStylesheets().add(new CssUrl().get ());
 //        scene.setOnMouseClicked(new EventHandler<MouseEvent> () {
 //            @Override
 //            public void handle (MouseEvent event) {
@@ -56,18 +59,19 @@ public class DialogAddNewUser {
 //        });
 
         this.nameField = new TextField ();
+
         nameField.setPromptText ("Имя пользователя");
-        nameField.setMinSize (300,60);
+        nameField.setMinSize (300,35);
         nameField.setMaxWidth (300);
 
         this.loginField = new TextField ();
         loginField.setPromptText ("Логин");
-        loginField.setMinSize (300,60);
+        loginField.setMinSize (300,35);
         loginField.setMaxWidth (300);
 
         this.passwordField = new PasswordField ();
         passwordField.setPromptText ("Пароль");
-        passwordField.setMinSize (300,60);
+        passwordField.setMinSize (300,35);
         passwordField.setMaxWidth (300);
 
         Button b1 = new Button ("Отмена");
@@ -116,7 +120,12 @@ public class DialogAddNewUser {
         vBox.setMinSize (360, 360);
         vBox.setSpacing (5);
 
-        vBox.getChildren ().addAll (nameField, loginField, passwordField, b2, b1);
+
+        Label labelName = new Label("Имя пользователя");
+        Label labelLog = new Label("Логин пользователя");
+        Label labelPas = new Label("Пароль пользователя");
+
+        vBox.getChildren ().addAll (labelName, nameField, labelLog, loginField,labelPas,  passwordField, b2, b1);
 
         stackPane.getChildren ().add (vBox);
 
@@ -145,26 +154,27 @@ public class DialogAddNewUser {
         String log = loginField.getText ();
         int pas = passwordField.getText ().hashCode ();
 
-        if (name.length () > 2 && log.length () > 2 && pas > 2){
+        if (name.length () > 3 && log.length () > 3 && passwordField.getText ().length() > 5){
             new AuthUserDateBase ().addNewUsr(name, log, pas);
             newWindow.close ();
             new InfoStage ("Новый пользователь сохранен.");
         } else {
-            new ErrorStage ("Ошибка формата.");
-            Platform.runLater (()->{
-                service.submit (()->{
-                    if (name.length () <=  2){
+
+                    if (name.length () <  4){
                         nameField.setStyle("-fx-background-color: #FF6347");
-                    }
-                    if (log.length () <=  2){
+                        new ErrorStage("Поле (имя) менее 4 символов.");
+                    } else if (log.length () <  4){
                         loginField.setStyle("-fx-background-color: #FF6347");
-                    }
-                    if (pas == 0){
+                        new ErrorStage("Поле (логин) менее 4 символов.");
+                    } else if (passwordField.getText ().length() < 5){
                         passwordField.setStyle("-fx-background-color: #FF6347");
+                        new ErrorStage("Поле (пароль) менее 6 символов.");
                     }
 
+            Platform.runLater (()->{
+                service.submit (()->{
                     try {
-                        Thread.sleep (150);
+                        Thread.sleep (1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace ();
                     new SystemErrorStage (e);

@@ -80,8 +80,8 @@ public class ListServices {
                 statement.setInt(7, 0);
             }
 
-            if (s.getNumberClients () != 0){
-                statement.setInt(8, s.getNumberClients ());
+            if (s.getNumberClient () != 0){
+                statement.setInt(8, s.getNumberClient ());
             } else {
                 statement.setInt(8, 0);
             }

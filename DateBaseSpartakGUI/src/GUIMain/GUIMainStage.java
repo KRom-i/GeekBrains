@@ -1,13 +1,17 @@
 package GUIMain;
 
 import GUIMain.CustomStage.SystemErrorStage;
+import GUIMain.Styles.CssUrl;
 import MySQLDB.ServerMySQL;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
@@ -21,8 +25,8 @@ public class GUIMainStage extends Application {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("GUIMain.fxml"));
              Scene scene = new Scene(root);
-//            String css = this.getClass().getResource("Styles/style.css").toExternalForm();
-//            scene.getStylesheets().add(css);
+//            String css = this.getClass().getResource("Styles/style2.css").toExternalForm();
+            scene.getStylesheets().add(new CssUrl ().get ());
 //            LOG.info ("CSS: " + css);
 //        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 //        double width = screenSize.getWidth();
@@ -36,6 +40,8 @@ public class GUIMainStage extends Application {
 //        primaryStage.setHeight(height - (height / 3));
 //        primaryStage.setHeight (740);
 //        primaryStage.setWidth (1024);
+
+        primaryStage.getIcons().add(new Image(new File("img\\logo\\DataBaseLogo.png").toURI().toURL().toString()));
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
         primaryStage.setMinWidth (1024);
@@ -44,6 +50,7 @@ public class GUIMainStage extends Application {
         } catch (IOException e) {
             LOG.error ("Ошибка при запуске приложения.", e);
             new SystemErrorStage (e);
+            e.printStackTrace();
         }
         LOG.info ("Успешный старт приложения.");
     }

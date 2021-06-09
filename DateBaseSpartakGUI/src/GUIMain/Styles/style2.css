@@ -1,6 +1,219 @@
-.text-field{
+.button {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.4) , 3, 0.0 , 0 , 1 );
+
 
 }
+
+.button:hover {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+
+ -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 4, 0.0 , 0 , 1 );
+
+}
+
+
+.button-gold {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.4) , 3, 0.0 , 0 , 1 );
+  -fx-background-color: #DAA520;
+}
+
+.button-gold:hover {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+ -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 4, 0.0 , 0 , 1 );
+   -fx-background-color: #FFD700;
+}
+
+.text-field{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );
+}
+
+
+.text-field:hover{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+
+}
+
+
+.list-view {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );
+}
+
+.list-cell {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.1) , 1, 0.0 , 0 , 1 );
+}
+
+.list-cell:hover {
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+     -fx-effect: dropshadow( three-pass-box , rgba(0.5,0.5,0.5,1) , 8, 0.5 , 0.2 , 1 );
+    -fx-border-color: #000000;
+}
+
+.menu-bar{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.menu{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.menu-button{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.menu-item{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.split-menu-button{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.context-menu{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.text-area {
+   -fx-background-radius: 10;
+   -fx-border-radius: 10;
+       -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );
+}
+
+.password-field{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.tab-pane{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.title{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+            -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.4) , 3, 0.0 , 0 , 1 );
+}
+
+
+.Spinner{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.my-dox-class-false{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.my-dox-class-true{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+            -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 5, 0.0 , 0 , 1 );
+}
+.label-service{
+    /*-fx-text-fill: #000086;*/
+}
+
+.info-stage{
+-fx-background-radius: 10;
+    -fx-border-radius: 10;
+-fx-font-size: 15pt;
+-fx-text-fill: #1179ec;
+    -fx-background-color: #FFFFFF;
+
+}
+
+.error-stage{
+-fx-background-radius: 10;
+    -fx-border-radius: 10;
+-fx-font-size: 15pt;
+-fx-text-fill: #FF0000;
+    -fx-background-color: #FFFFFF;
+}
+
+.warning-stage{
+-fx-background-radius: 10;
+    -fx-border-radius: 10;
+-fx-font-size: 15pt;
+-fx-text-fill: #FFD700;
+    -fx-background-color: #FFFFFF;
+}
+
+.box-info-user{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-background-color: #FFFFFF;
+        -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 5, 0.0 , 0 , 1 );
+
+}
+
+.box-class{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-background-color: #FFFFFF;
+        -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 5, 0.0 , 0 , 1 );
+}
+
+.label-warning{
+-fx-text-fill: #FF6347;
+}
+
+.label-null{
+-fx-text-fill: black;
+}
+
+.choice-box{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.date-picker{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.box-action-service{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-background-color: #87CEFA;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 5, 0.0 , 0 , 1 );
+}
+
+.box-action-service-false{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-background-color: #FF6347;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 5, 0.0 , 0 , 1 );
+}
+
+
+
+
+
+
+
+
+
 
 
 

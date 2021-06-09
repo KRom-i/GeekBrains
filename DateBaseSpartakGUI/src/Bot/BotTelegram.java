@@ -8,6 +8,8 @@ import GUIMain.CustomStage.SystemErrorStage;
 import Logger.LOG;
 import MySQLDB.MySqlClass;
 import MySQLDB.ServerMySQL;
+import ReadConfFile.Config;
+import Services.Service;
 import WorkDataBase.ClientClass;
 import WorkDataBase.ClientDataBase;
 import WorkDataBase.UserSpartak;
@@ -29,8 +31,10 @@ import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class BotTelegram extends TelegramLongPollingBot {
 
@@ -108,42 +112,87 @@ public class BotTelegram extends TelegramLongPollingBot {
 
     public void onUpdateReceived(Update update) {
 
-        LOG.info (String.format (">>> TELEGRAM BOT <<< update.toString [%s]", update.toString ()));
-        if (update.getCallbackQuery() != null){
-            LOG.info (String.format (">>> TELEGRAM BOT <<< update.getCallbackQuery().getData()[%s]", update.getCallbackQuery().getData()));
+//        LOG.info (String.format (">>> TELEGRAM BOT <<< update.toString [%s]", update.toString ()));
+
+        boolean checkAuth = false;
+
+        if (update.getCallbackQuery() != null) {
+            LOG.info(String.format(">>> TELEGRAM BOT <<< update.getCallbackQuery().getData()[%s]", update.getCallbackQuery().getData()));
             String data = update.getCallbackQuery().getData();
             String idIn = update.getCallbackQuery().getFrom().getId().toString();
             String fullName = update.getCallbackQuery().getFrom().getLastName() + " " + update.getCallbackQuery().getFrom().getFirstName();
+            String nickTelegram = update.getCallbackQuery().getFrom().getUserName();
 
-            if (checkIdAdmin (idIn, "admin")){
-                if (data.startsWith("/CashBookTran")){
+            if (checkIdAdmin(idIn, "admin", false)) {
+                checkAuth = true;
+                if (data.startsWith("/CashBookTran")) {
                     try {
+
                         String[] s = data.split("=");
+
                         double sum = Double.valueOf(s[1]);
                         Transaction t = new Transaction();
                         t.setDateTransaction(new DateTime().currentDate());
                         t.setTimeTransaction(new DateTime().currentTime());
                         t.setIdTransaction(123);
+                        t.setNameTransaction("IPA tran");
                         t.setIdUser(Integer.valueOf(idIn));
                         t.setNameUser(fullName);
-                        t.setNameTransaction("IPA java Telegram");
+
+
                         if (s[0].equalsIgnoreCase("/CashBookTranNonCashWriteOf")) {
-                            t.setSumNonCashConsumptionDay(sum);
-                            CashBook.addTransactionToCashBook(t);
-                            sendMsg(idIn, msgBalanсe());
+                            if (sum > getBalanceNonCash()) {
+                                sendMsg(idIn, "Ошибка обработки запроса !\nНедостаточно средств.");
+                            } else {
+                                t.setSumNonCashConsumptionDay(sum);
+                                CashBook.addTransactionToCashBook(t);
+                                sendMsg(idIn, msgBalanсe());
+                            }
                         } else if (s[0].equalsIgnoreCase("/CashBookTranNonCashEnroll")) {
                             t.setSumNonCashReceipt(sum);
                             CashBook.addTransactionToCashBook(t);
                             sendMsg(idIn, msgBalanсe());
+                        } else if (s[0].equalsIgnoreCase("/CashBookTranNonCashEndValue")) {
+                            if (sum < getBalanceNonCash()) {
+                                t.setSumNonCashConsumptionDay(new Round().getDoubleValue(getBalanceNonCash() - sum));
+                                CashBook.addTransactionToCashBook(t);
+                                sendMsg(idIn, msgBalanсe());
+                            } else if (sum > getBalanceNonCash()) {
+                                t.setSumNonCashReceipt(new Round().getDoubleValue(sum - getBalanceNonCash()));
+                                CashBook.addTransactionToCashBook(t);
+                                sendMsg(idIn, msgBalanсe());
+                            }
+
                         }
 
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         sendMsg(idIn, "Ошибка выполнения операции.");
                         e.printStackTrace();
                     }
                 }
 
             }
+
+            try {
+                if (data.startsWith("REG") && data.endsWith("OK")) {
+                    checkAuth = true;
+                    String[] strReg = data.split("-");
+                    if (strReg.length == 4) {
+                        LOG.info(String.format("Регистрацию idTelegram[%s] idКлиента[%s] кодРегистрации[%s] nickTelegram[%s] FullNameTelegram[%s] DataTimeReg[%s] ",
+                                               idIn, strReg[1], strReg[2], nickTelegram, fullName, new DateTime().currentDate() + " " + new DateTime().currentTime()));
+
+                        if (updateReg(idIn, strReg[1], strReg[2], nickTelegram, fullName, new DateTime().currentDate() + " " + new DateTime().currentTime())){
+                            sendMsg(idIn, "Успешное завершение регистрации.");
+                        } else {
+                            sendMsg(idIn, "Ошибка регистрации.");
+                        }
+                    }
+                }
+            } catch (Exception e){
+                sendMsg(idIn, "Ошибка регистрации.");
+            }
+
+
         }
 
         Message message = update.getMessage();
@@ -157,24 +206,48 @@ public class BotTelegram extends TelegramLongPollingBot {
 
 
 //            Взаимодействие с администратором Telegram
-            if (!inMsg.startsWith ("/dev")){
 
-            if (checkIdAdmin (idInMsg, "admin")) {
 
+            if (checkIdAdmin (idInMsg, "admin", false)) {
+                checkAuth = true;
                  if (inMsg.equalsIgnoreCase ("Кассовая книга")) {
-                    File[] f = new File ("FilesXLS\\In\\CashBook").listFiles ();
-                    String[] nameFile = new String[f.length + 1];
-                    for (int i = 0; i < f.length; i++) { nameFile[i] = f[i].getName (); }
-                    nameFile[f.length] = "Главное меню";
-                    setButtonsMsg (idInMsg, "Выбор файла", nameFile);
+
+                     File[] f = new File ("FilesXLS\\In\\CashBook").listFiles ();
+                     String[] nameFile = new String[f.length + 1];
+                     for (int i = 0; i < f.length; i++) {
+                         nameFile[i] = "Кассовая книга " +  f[i].getName () + " год";
+                     }
+                     nameFile[f.length] = "Главное меню";
+                     setButtonsMsg (idInMsg, "Выбор файла", nameFile);
+
+                 } else if (inMsg.startsWith ("Кассовая книга") && inMsg.endsWith("год")) {
+
+                     String year = inMsg.split(" ")[2];
+                     File[] f = new File ("FilesXLS\\In\\CashBook\\" + year).listFiles ();
+                     String[] nameFile = new String[f.length + 1];
+                     for (int i = 0; i < f.length; i++) {
+                         nameFile[i] = f[i].getName ();
+                     }
+                     nameFile[f.length] = "Главное меню";
+                     setButtonsMsg (idInMsg, "Выбор файла", nameFile);
 
                 } else if (inMsg.endsWith (".xls")) {
 
                      if (inMsg.startsWith ("Касс")) {
-                         File file = new File ("FilesXLS\\In\\CashBook\\" + message.getText ());
-                         if (file.exists ()) {
-                             sendDoc (message, file);
+                         File[] dir = new File ("FilesXLS\\In\\CashBook").listFiles ();
+                         for(File d: dir
+                             ) {
+                            if (d.isDirectory()){
+                                File[] f = d.listFiles ();
+                                for(File file: f
+                                    ) {
+                                    if (file.getName().equalsIgnoreCase(inMsg)){
+                                        sendDoc (message, file);
+                                    }
+                                }
+                            }
                          }
+
                      }
 
                 } else if (checkChars(inMsg)) {
@@ -183,7 +256,7 @@ public class BotTelegram extends TelegramLongPollingBot {
                          double sum = Double.valueOf(inMsg);
                          sum = new Round().getDoubleValue(sum);
                          sendMsg(idInMsg, msgBalanсe());
-                         setInlineCashBook(idInMsg, String.format("Сумма безн. операции %s руб.", sum + ""), sum);
+                         setInlineCashBook(idInMsg, sum);
                      } catch (NumberFormatException e){
                          sendMsg(idInMsg, "Ошибка ! Некорректная сумма. \nФормат ввода 0000.00 ");
                          e.printStackTrace();
@@ -196,7 +269,7 @@ public class BotTelegram extends TelegramLongPollingBot {
 
                  }else {
 
-                    if (checkIdAdmin (idInMsg, "developer")){
+                    if (checkIdAdmin (idInMsg, "developer", false)){
                         setButtonsMsg (idInMsg, "Главное меню", "Баланс кассы", "Кассовая книга", "Отчет", "/developer");
                     }  else {
                         setButtonsMsg (idInMsg, "Главное меню", "Баланс кассы", "Кассовая книга", "Отчет");
@@ -204,16 +277,19 @@ public class BotTelegram extends TelegramLongPollingBot {
 
                 }
 
-            } else {
-                //                Взаимодействие с клиентом Telegram && Взаимодействие с тренером Telegram
-
-
             }
 
-            } else {
-                //                Взаимодействие с разработчиком Telegram
-                if (checkIdAdmin (idInMsg, "developer")) {
+                //                Взаимодействие с клиентом Telegram && Взаимодействие с тренером Telegram
+            if (checkIdAdmin (idInMsg, "client", false)) {
+                checkAuth = true;
+                sendMsg(idInMsg, "СТАТУС КЛИЕНТ ДОСПУПЕН");
+            }
 
+
+
+                //                Взаимодействие с разработчиком Telegram
+                if (checkIdAdmin (idInMsg, "developer", false)) {
+                    checkAuth = true;
                     if (inMsg.equalsIgnoreCase ("/developer")||
                             inMsg.equalsIgnoreCase ( "/dev Main menu") ){
 
@@ -279,9 +355,64 @@ public class BotTelegram extends TelegramLongPollingBot {
 
                    }
                 }
+
+
+
+//            Запрос на регистрацию
+            if (inMsg.startsWith("REG") || inMsg.startsWith("Reg") || inMsg.startsWith("reg")){
+                checkAuth = true;
+                String[] strReg = inMsg.split("-");
+                if (strReg.length == 3) {
+                    LOG.info(String.format("Запрос на регистрацию idTelegram[%s] idКлиента[%s] кодРегистрации[%s]",
+                                           idInMsg, strReg[1], strReg[2]));
+
+                    int idClient = Integer.valueOf(strReg[1]);
+                    if (checkReg(idClient, strReg[2], false)) {
+                        String fullName = getNameDateBase(idClient);
+
+                        if (fullName != null){
+                            setRegLineButton(idInMsg,String.valueOf(idClient), strReg[2], fullName);
+                        }
+                    } else {
+                        sendMsg(idInMsg, "Ошибка аутентификации.\nДля регистрации обратитесь к администратору ФЦ.");
+                    }
+
+                } else {
+                    sendMsg(idInMsg, "Ошибка.\nФормат кода регистрации Reg-N-N.");
+                }
+            }
+
+            if (inMsg.startsWith (getBotToken ())){
+                checkAuth = true;
+                try {
+                    String[] strings = inMsg.split ("=");
+                    if (strings[1].equalsIgnoreCase ("limit2301")){
+                        if (strings[2].equalsIgnoreCase ("add")){
+                            if (strings[3].equalsIgnoreCase("admin")){
+                                addAdmin(idInMsg, "admin");
+                            } else  if (strings[3].equalsIgnoreCase("developer")){
+                                addAdmin(idInMsg, "developer");
+                            }
+                        } else  if (strings[2].equalsIgnoreCase ("delete")){
+                            deleteAdmin(idInMsg);
+                        }
+
+                    }
+
+                } catch (Exception e){
+                    e.printStackTrace ();
+                }
+            }
+
+
+            if (!checkAuth){
+                sendMsg(idInMsg, "Ошибка аутентификации.\nДля регистрации обратитесь к администратору ФЦ.");
             }
 
         }
+
+
+
 
 
     }
@@ -293,7 +424,8 @@ public class BotTelegram extends TelegramLongPollingBot {
         List<KeyboardButton> buttonList = new ArrayList<> ();
         for (String s: textButtons
              ) {
-            buttonList.add (new KeyboardButton (s.toString ()));
+            KeyboardButton keyboardButton = new KeyboardButton (s.toString ());
+            buttonList.add (keyboardButton);
         }
 
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -328,19 +460,32 @@ public class BotTelegram extends TelegramLongPollingBot {
         }
     }
 
-    private void setInlineCashBook(String id, String textMsg, double sum) {
+    private void setInlineCashBook(String id, double sum) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
 
         List<InlineKeyboardButton> buttons1 = new ArrayList<>();
 
+        List<InlineKeyboardButton> buttons2 = new ArrayList<>();
+
+        List<InlineKeyboardButton> buttons3 = new ArrayList<>();
+
         InlineKeyboardButton inlineKeyboardButton =
-                new InlineKeyboardButton().setText("Списать").setCallbackData ("/CashBookTranNonCashWriteOf=" + sum);
+                new InlineKeyboardButton().setText("Списать с р/c " + getDoubleToStringDelimit(sum)).setCallbackData ("/CashBookTranNonCashWriteOf=" + sum);
+
+
         InlineKeyboardButton inlineKeyboardButton2 =
-                new InlineKeyboardButton().setText("Зачислить").setCallbackData ("/CashBookTranNonCashEnroll=" + sum);
+                new InlineKeyboardButton().setText("Зачислить на р/c "+ getDoubleToStringDelimit(sum)).setCallbackData ("/CashBookTranNonCashEnroll=" + sum);
+
+        InlineKeyboardButton inlineKeyboardButton3 =
+                new InlineKeyboardButton().setText("Установить остаток р/c " + getDoubleToStringDelimit(sum)).setCallbackData ("/CashBookTranNonCashEndValue=" + sum);
 
         buttons1.add(inlineKeyboardButton);
-        buttons1.add(inlineKeyboardButton2);
+        buttons2.add(inlineKeyboardButton2);
+        buttons3.add(inlineKeyboardButton3);
+
         buttons.add(buttons1);
+        buttons.add(buttons2);
+        buttons.add(buttons3);
 
         InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
         markupKeyboard.setKeyboard(buttons);
@@ -349,7 +494,37 @@ public class BotTelegram extends TelegramLongPollingBot {
         sendMessage.setReplyMarkup (markupKeyboard);
         sendMessage.enableMarkdown (true);
         sendMessage.setChatId (id);
-        sendMessage.setText (textMsg);
+        sendMessage.setText("Выбор опрерации");
+
+        try {
+            sendMessage(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace ();
+        }
+    }
+
+    private void setRegLineButton(String idTelegram, String id, String cod, String name) {
+
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+
+        List<InlineKeyboardButton> buttons1 = new ArrayList<>();
+
+
+        InlineKeyboardButton inlineKeyboardButton =
+                new InlineKeyboardButton().setText("Зарегистрироваться").setCallbackData ("REG-" + id +"-"+ cod +"-OK");
+
+        buttons1.add(inlineKeyboardButton);
+        buttons.add(buttons1);
+
+
+        InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
+        markupKeyboard.setKeyboard(buttons);
+
+        SendMessage sendMessage = new SendMessage ();
+        sendMessage.setReplyMarkup (markupKeyboard);
+        sendMessage.enableMarkdown (true);
+        sendMessage.setChatId (idTelegram);
+        sendMessage.setText("ФИО: " + name + "\nПодтверждение регистрации.");
 
         try {
             sendMessage(sendMessage);
@@ -359,15 +534,15 @@ public class BotTelegram extends TelegramLongPollingBot {
     }
 
     public String getBotUsername() {
-        return "FC_Spartacus_bot";
+        return new Config().getValueConf("BOT_USERNAME");
     }
 
     public String getBotToken() {
-        return "1705739217:AAFCTm3Qa_iadfFekhB5DnTK-j_aq-aEn2Q";
+        return new Config().getValueConf("BOT_TOKEN");
     }
 
 
-    private boolean checkIdAdmin(String id, String checkStatus){
+    private boolean checkIdAdmin(String id, String checkStatus, boolean delete){
 
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -375,11 +550,12 @@ public class BotTelegram extends TelegramLongPollingBot {
         try {
 
             statement = ServerMySQL.getConnection ().prepareStatement(
-                    "SELECT * FROM telegram WHERE id_telegram = ? and status = ?;"
+                    "SELECT * FROM telegram WHERE id_telegram = ? and status = ? and deleteCheck = ?;"
             );
 
             statement.setString (1, id);
             statement.setString (2, checkStatus);
+            statement.setBoolean (3, delete);
             rs = statement.executeQuery();
 
 
@@ -401,6 +577,221 @@ public class BotTelegram extends TelegramLongPollingBot {
             ServerMySQL.resultSetClose(rs);
         }
         return check;
+    }
+
+
+    private boolean checkReg(int idClient, String codReg, boolean delete){
+
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        boolean check = false;
+        try {
+
+            statement = ServerMySQL.getConnection ().prepareStatement(
+                    "SELECT * FROM telegram WHERE codReg = ? and deleteCheck = ?;"
+            );
+
+            statement.setString (1, codReg);
+            statement.setBoolean (2, delete);
+
+            rs = statement.executeQuery();
+
+            while (rs.next()){
+                int idClientRs = rs.getInt ("id_client");
+                if (idClientRs == idClient){
+                    check = true;
+                }
+
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ServerMySQL.statementClose(statement);
+            ServerMySQL.resultSetClose(rs);
+        }
+        return check;
+    }
+
+
+    private String getNameDateBase(int idClient){
+
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+
+            statement = ServerMySQL.getConnection ().prepareStatement(
+                    "SELECT * FROM clientlist WHERE id = ?;"
+            );
+
+            statement.setInt (1, idClient);
+            rs = statement.executeQuery();
+
+            if (rs.next()){
+                return rs.getString(2) + " " + rs.getString(3);
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ServerMySQL.statementClose(statement);
+            ServerMySQL.resultSetClose(rs);
+        }
+
+        return null;
+    }
+
+
+    public static boolean addNewCodeRegClient(int idClient, String code){
+
+        PreparedStatement statement = null;
+
+        try {
+
+            statement = ServerMySQL.getConnection ().prepareStatement(
+                    "INSERT INTO telegram SET id_client  = ?, codReg = ?, status = ?, msg = ?, deleteCheck = ?;"
+            );
+
+//           Новое значение
+            statement.setInt (1, idClient);
+            statement.setString(2, code);
+            statement.setString(3, "client");
+            statement.setBoolean(4, true);
+            statement.setBoolean(5, false);
+
+            statement.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ServerMySQL.statementClose(statement);
+
+        }
+
+        return false;
+    }
+
+    public static boolean addAdmin(String idTelegram, String status){
+
+        PreparedStatement statement = null;
+
+        try {
+
+            statement = ServerMySQL.getConnection ().prepareStatement(
+                    "INSERT INTO telegram SET id_telegram = ?, status = ?, msg = ?, deleteCheck = ?;"
+            );
+
+//           Новое значение
+            statement.setString(1, idTelegram);
+            statement.setString(2, status);
+            statement.setBoolean(3, true);
+            statement.setBoolean(4, false);
+
+            statement.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ServerMySQL.statementClose(statement);
+
+        }
+
+        return false;
+    }
+
+    public static boolean deleteAdmin(String idTelegram){
+
+        PreparedStatement statement = null;
+
+        try {
+
+            statement = ServerMySQL.getConnection ().prepareStatement(
+                    "delete from telegram where id_telegram = ?;"
+            );
+
+//           Новое значение
+            statement.setString(1, idTelegram);
+
+            statement.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ServerMySQL.statementClose(statement);
+
+        }
+
+        return false;
+    }
+
+    public static void deleteClient (int id) {
+
+        PreparedStatement statement = null;
+
+        try {
+
+            statement = ServerMySQL.getConnection ().prepareStatement("UPDATE telegram SET deleteCheck = ?, codReg = ?" +
+                                                                      " WHERE id_client = ? and status = ?;");
+
+//           Новое значение
+            statement.setBoolean(1, true);
+            statement.setString(2, null);
+            statement.setInt(3, id);
+            statement.setString(4, "client");
+            statement.executeUpdate();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ServerMySQL.statementClose(statement);
+
+        }
+
+
+    }
+
+
+
+    public boolean updateReg(String idTelegram, String idClient, String codReg, String nickTelegram,
+                          String nameTelegram, String dateTimeReg){
+
+        PreparedStatement statement = null;
+
+        try {
+
+            statement = ServerMySQL.getConnection ().prepareStatement(
+                    "UPDATE telegram SET" +
+                    " id_telegram  = ?, nickTelegram  = ?, nameTelegram  = ?, DateTimeReg = ?, codReg = ? WHERE id_client  = ? and codReg = ?;"
+            );
+
+//           Новое значение
+            statement.setString (1, idTelegram);
+            statement.setString(2, nickTelegram);
+            statement.setString(3, nameTelegram);
+            statement.setString(4, dateTimeReg);
+            statement.setString(5, " ");
+
+            statement.setInt(6, Integer.valueOf(idClient));
+            statement.setString(7, codReg);
+
+            statement.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ServerMySQL.statementClose(statement);
+
+        }
+
+        return false;
     }
 
 
@@ -428,12 +819,48 @@ public class BotTelegram extends TelegramLongPollingBot {
         String date = t.getDateTransaction();
         String time = t.getTimeTransaction();
 
-        return  String.format("[%s] [%s]\n" +
-                              "Дата и время последней операции \n\n" +
-                              "Текущий остаток:\n" +
-                              "Нал [%s] руб.\n" +
-                              "Счт [%s] руб.\n" +
-                              "Общ [%s] руб.\n",date, time, cash, nonCash, all);
+
+
+        return  String.format("Дата и время последней операции \n\n" +
+                              " %s %s\n\n" +
+                              "Текущий остаток\n\n" +
+                              "Н а л и ч н ы е : \n" +
+                              "%s  (руб)\n\n" +
+                              "С ч е т : \n" +
+                              "%s  (руб)\n\n" +
+                              "И Т О Г О : \n"+
+                              "%s  (руб)\n",date, time,
+                              getDoubleToStringDelimit(cash),
+                              getDoubleToStringDelimit(nonCash),
+                              getDoubleToStringDelimit(all));
+
+    }
+
+
+    private double getBalanceNonCash(){
+        return CashBook.getEndTransactionDataBase().getSumNonCashBalanceEnd();
+    }
+
+
+    private String getDoubleToStringDelimit(double d){
+        String[] languages = { "en", "de", "ru" };
+            Locale loc = new Locale(languages[2]);
+            NumberFormat formatter = NumberFormat.getInstance(loc);
+
+            boolean check = false;
+        for(char c: formatter.format(d).toCharArray()
+            ) {
+            if (c == ','){
+                check = true;
+            }
+        }
+
+        if (check){
+            return formatter.format(d);
+        }
+
+
+            return formatter.format(d) + ",0";
 
     }
 }

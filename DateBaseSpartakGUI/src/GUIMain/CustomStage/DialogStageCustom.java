@@ -1,5 +1,6 @@
 package GUIMain.CustomStage;
 
+import GUIMain.Styles.CssUrl;
 import Logger.LOG;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -31,6 +32,7 @@ public class DialogStageCustom {
 //        newWindow.setTitle("Second Stage");
 
         Scene scene = new Scene(stackPane ,200, 100);
+        scene.getStylesheets().add(new CssUrl().get ());
         scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle (MouseEvent event) {

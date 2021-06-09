@@ -1,36 +1,57 @@
 package GUIMain.CustomStage;
 
+import GUIMain.Styles.CssUrl;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.awt.*;
+import java.io.File;
+import java.net.MalformedURLException;
 
 public class InfoStage {
 
     public InfoStage(String msg) {
 
-        StackPane stackPane = new StackPane ();
+        HBox hBox = new HBox();
+        hBox.getStylesheets().add(new CssUrl().get());
+        hBox.getStyleClass().add("info-stage");
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        HBox hBox1 = new HBox();
+        hBox1.setAlignment(Pos.CENTER);
+        Label label = new Label (msg);
+        label.getStyleClass().add("info-stage");
+        hBox1.getChildren ().add (label);
+        hBox1.setMinWidth(390);
+        try {
+            ImageView imageView1 = new ImageView(new javafx.scene.image.Image(new File("img/logo/info1.png").toURI().toURL().toString()));
+            imageView1.setFitHeight(40);
+            imageView1.setFitWidth(60);
+            hBox.getChildren().addAll(imageView1, hBox1);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
-        stackPane.setStyle ("-fx-background-radius: 5; " +
-                " -fx-background-color: #56a7f5; " +
-                " -fx-font-size: 15pt;" +
-                " -fx-text-fill: black;");
-        stackPane.getChildren ().add (new Label (msg));
 
         Stage newWindow = new Stage ();
         newWindow.setAlwaysOnTop(true);
 
 //        newWindow.setTitle("Second Stage");
 
-        int w = 300;
-        int h = 150;
-        Scene scene = new Scene (stackPane, w, h);
+        int w = 450;
+        int h = 50;
+        hBox.setPadding(new Insets(0, 10, 0, 0));
+        Scene scene = new Scene (hBox, w, h);
         scene.setOnMouseClicked (new EventHandler<MouseEvent> () {
             @Override
             public void handle (MouseEvent event) {
@@ -46,18 +67,18 @@ public class InfoStage {
         // Specifies the owner Window (parent) for new window
 
 
-        newWindow.initStyle (StageStyle.UNDECORATED);
+        newWindow.initStyle (StageStyle.TRANSPARENT);
 
         // Set position of second window, related to primary window.
 
-        newWindow.setOpacity (0.85);
+        newWindow.setOpacity (0.90);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         double width = screenSize.getWidth();
         double height = screenSize.getHeight();
 
         newWindow.setX (width - w - 20);
-        newWindow.setY (height - h - 50);
+        newWindow.setY (height - h - 20);
 
         newWindow.show ();
 

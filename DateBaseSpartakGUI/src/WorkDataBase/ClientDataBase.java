@@ -308,4 +308,48 @@ public static void startNewID(String nameClass, int numberIP){
         }
 
     }
+
+
+
+    public static ClientClass getClientDateBase(int idClient) {
+
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+
+        ClientClass client = new ClientClass();
+        try {
+
+            statement = ServerMySQL.getConnection ().prepareStatement(
+                    "SELECT * FROM clientList Where id = ?;"
+            );
+
+            statement.setInt(1, idClient);
+
+            rs = statement.executeQuery();
+
+
+            while (rs.next()) {
+                    client.setId(rs.getInt("id"));
+                    client.setFirstName(rs.getString("FirstName"));
+                    client.setLastName(rs.getString("LastName"));
+                    client.setPatronymicName(rs.getString("PatName"));
+                    client.setTelephone(rs.getString("Telephone"));
+                    client.setDateBirth(rs.getString("DataBirth"));
+                    client.setEmail(rs.getString("Email"));
+                    client.setInfoClient(rs.getString("InfoClient"));
+
+            }
+
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            statementClose(statement);
+            resultSetClose(rs);
+        }
+
+        return client;
+    }
 }

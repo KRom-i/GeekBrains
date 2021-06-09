@@ -4,6 +4,7 @@ import Format.DateTime;
 import GUIMain.CustomStage.ErrorStage;
 import GUIMain.CustomStage.InfoStage;
 import GUIMain.CustomStage.SystemErrorStage;
+import GUIMain.Styles.CssUrl;
 import Logger.LOG;
 import MySQLDB.ServerMySQL;
 import WorkDataBase.AuthUserDateBase;
@@ -58,6 +59,7 @@ public class DialogUserEdit {
         newWindow.setTitle("Смена логина/пароля");
 
         Scene scene = new Scene(stackPane);
+        scene.getStylesheets().add(new CssUrl().get ());
 //        scene.setOnMouseClicked(new EventHandler<MouseEvent> () {
 //            @Override
 //            public void handle (MouseEvent event) {
@@ -67,17 +69,17 @@ public class DialogUserEdit {
 
         this.nameField = new TextField ();
         nameField.setPromptText ("Имя пользователя");
-        nameField.setMinSize (300,60);
+        nameField.setMinSize (300,35);
         nameField.setMaxWidth (300);
 
         this.loginField = new TextField ();
         loginField.setPromptText ("Логин");
-        loginField.setMinSize (300,60);
+        loginField.setMinSize (300,35);
         loginField.setMaxWidth (300);
 
         this.passwordField = new PasswordField ();
         passwordField.setPromptText ("Пароль");
-        passwordField.setMinSize (300,60);
+        passwordField.setMinSize (300,35);
         passwordField.setMaxWidth (300);
 
         Button b1 = new Button ("Отмена");
@@ -128,7 +130,12 @@ public class DialogUserEdit {
 
         nameField.setText (AuthUserDateBase.checkUserAuthStart ().getName ());
         loginField.setText (AuthUserDateBase.checkUserAuthStart ().getLogin ());
-        vBox.getChildren ().addAll (nameField, loginField, passwordField, b2, b1);
+
+        Label labelName = new Label("Имя пользователя");
+        Label labelLog = new Label("Логин пользователя");
+        Label labelPas = new Label("Пароль пользователя");
+
+        vBox.getChildren ().addAll (labelName, nameField, labelLog, loginField, labelPas,  passwordField, b2, b1);
 
         stackPane.getChildren ().add (vBox);
 

@@ -1,8 +1,13 @@
 package Cash;
 
 import Format.DateTime;
+import GUIMain.Styles.CssUrl;
 import Logger.LOG;
+import Services.ImroptExcel.ServiceImport;
+import Services.Service;
 import WorkDataBase.AuthUserDateBase;
+import WorkDataBase.Trainers.Trainer;
+import WorkDataBase.Trainers.TrainerList;
 import WorkDataBase.UserSpartak;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -18,6 +23,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.util.List;
 
@@ -51,36 +57,74 @@ public class NodeViewHistory {
                     }
 
                     String strNameTran = t.get (i).getNameTransaction ();
-                    Label label = new Label ();
-                    if (t.get (i).isDeleteTran ()){
-                        label.setStyle("-fx-text-fill: #FF6347");
-
-                    }
+//                    Label label = new Label ();
+//                    if (t.get (i).isDeleteTran ()){
+//                        label.getStyleClass().add("label-warning");
+//
+//                    }
                     if (t.get (i).getNameTransaction ().startsWith ("Удаление операции")){
                         strNameTran = "Отмена";
                     }
 
                     int n = i + 1;
-                    String str = String.format ("[ %s ] [ %s ] [ %s ] [ %s ]",
-                            n, t.get (i).getTimeTransaction (), strNameTran, sum);
-                    label.setText (str);
+//                    String str = String.format ("[ %s ] [ %s ] [ %s ] [ %s ] [ %s ] [ %s ]",
+//                            n, t.get (i).getTimeTransaction (), t.get(i).getNameTypePayment() , strNameTran, t.get(i).getNameService() , sum);
+//                    label.setText (str);
+                    Label label1 = new Label("  " + n +"");
+                    label1.setMinWidth(50);
+
+                    Label label2 = new Label(t.get (i).getTimeTransaction ());
+                    label2.setMinWidth(100);
+
+                    Label label3 = new Label(t.get(i).getNameTypePayment());
+                    label3.setMinWidth(150);
+
+                    Label label4 = new Label(strNameTran);
+                    label4.setMinWidth(150);
+
+                    Label label5 = new Label(t.get(i).getNameService());
+                    label5.setMinWidth(250);
+
+                    Label label6 = new Label(sum + "");
+                    label6.setMinWidth(150);
 
 
                     int finalI = i;
-                    label.setOnMouseClicked (new EventHandler<MouseEvent> () {
+//                    label.setOnMouseClicked (new EventHandler<MouseEvent> () {
+//                        @Override
+//                        public void handle(MouseEvent event) {
+//                            if (event.getClickCount () == 2){
+//
+//                            }
+//                        }
+//                    });
+                    HBox hBox = new HBox();
+                    if (t.get (i).isDeleteTran ()){
+                        label1.getStyleClass().add("label-warning");
+                        label2.getStyleClass().add("label-warning");
+                        label3.getStyleClass().add("label-warning");
+                        label4.getStyleClass().add("label-warning");
+                        label5.getStyleClass().add("label-warning");
+                        label6.getStyleClass().add("label-warning");
+
+                    }
+
+                    hBox.setSpacing(3);
+                    hBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
                         @Override
-                        public void handle(MouseEvent event) {
-                            if (event.getClickCount () == 2){
-                                new DialogInfoTran (label, t.get (finalI));
+                        public void handle (MouseEvent event) {
+                            if (event.getClickCount() == 2){
+                                new DialogInfoTran (label1, t.get (finalI));
                             }
                         }
                     });
-                    history.getItems ().add(label);
+                    hBox.getChildren().addAll(label1, label2, label3, label4, label5, label6);
+                    history.getItems ().add(hBox);
                 }
 
             } else {
                 Label label = new Label (" Нет кассовых операций");
-                history.getItems ().add(label);
+                history.getItems ().addAll(label);
             }
         });
 
@@ -103,6 +147,7 @@ public class NodeViewHistory {
             newWindow.setTitle ("Операция № " + t.getNumberTransaction ());
 
             Scene scene = new Scene (stackPane, 620, 900);
+            scene.getStylesheets().add(new CssUrl().get ());
 //        scene.setOnMouseClicked(new EventHandler<MouseEvent> () {
 //            @Override
 //            public void handle (MouseEvent event) {
@@ -214,7 +259,27 @@ public class NodeViewHistory {
                 @Override
                 public void handle(ActionEvent event) {
                     LOG.info  ("Удаление транзакции \n" + t.toString ());
-                    CashBook.deleteTran(t);
+
+                    if (t.getIdTransaction() < 4){
+
+                        CashBook.deleteTran(t);
+                         Service service = new Service().getServiceDataBase(t.getIdService());
+
+                        if (service.getBalance() != 999_999){
+                             new Service().updateBalance(t.getIdService (), service.getBalance() + 1);
+                             ServiceImport.readDataBase(false);
+                             ServiceImport.updateVbox(service.getType() - 1, service.getId(), 1);
+                        }
+
+                    } else if (t.getIdTransaction() == 4) {
+                        CashBook.deleteTran(t);
+                        Trainer trainer = new Trainer().getOneTrainerIdClient(t.getIdClient());
+                        trainer.setBalanceDateBase(- t.getSumCashConsumption());
+                        LOG.info(String.format("Отмена списания с баланса теренра id Тренера [%s] id Клиента [%s] имя тренера [%s] " +
+                                 "сумма [%s]", trainer.getId(), trainer.getClient().getId(), trainer.getClient().toStringIteam(), t.getSumCashConsumption()));
+                        TrainerList.updateListView();
+                    }
+
                     newWindow.close ();
                 }
             });

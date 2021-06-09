@@ -1,11 +1,15 @@
 package WorkDataBase;
 
+import MySQLDB.ServerMySQL;
+import Services.ActionServices.ActionService;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -24,11 +28,30 @@ public class ClientClass {
     private List<Object> subscription;
     private final String NAME_Class_DB = "Client";
 
+    private String codRegTelegram;
+    private boolean telegramReg;
+
     public String nameClassDataBase(){
         return NAME_Class_DB;
     }
 
     public ClientClass(){
+    }
+
+    public String getCodRegTelegram () {
+        return codRegTelegram;
+    }
+
+    public void setCodRegTelegram (String codRegTelegram) {
+        this.codRegTelegram = codRegTelegram;
+    }
+
+    public boolean isTelegramReg () {
+        return telegramReg;
+    }
+
+    public void setTelegramReg (boolean telegramReg) {
+        this.telegramReg = telegramReg;
     }
 
     public String getEmail() {
@@ -110,31 +133,34 @@ public class ClientClass {
 
     public boolean booleanFind(String findStr){
 
-        int control = 0;
+            String[] s = findStr.split (" ");
 
-        String[] strings = findStr.split (" ");
+            boolean checkLastName = false;
+            boolean checkFirstName = false;
+            boolean checkPatronymicName = false;
 
-        for(String s: strings
+            int control = 0;
 
-            ) {
+            for(int i = 0; i < s.length; i++) {
 
-            s = editText (s);
+                s[i] = editText(s[i]);
 
-            if (this.getLastName ().startsWith (s)){
-                control++;
-                continue;
+                if (this.getLastName().startsWith(s[i]) && !checkLastName) {
+                    checkLastName = true;
+                    control++;
+                } else if (this.getFirstName().startsWith(s[i]) && !checkFirstName) {
+                    checkFirstName = true;
+                    control++;
+                } else if (this.getPatronymicName().startsWith(s[i]) && !checkPatronymicName) {
+                    checkPatronymicName = true;
+                    control++;
+                }
+
             }
-            if (this.getFirstName ().startsWith (s)){
-                control++;
-                continue;
-            }
-            if (this.getPatronymicName ().startsWith (s)){
-                control++;
-                continue;
-            }
-        }
 
-        return control == strings.length;
+            return control == s.length;
+
+
     }
 
 
@@ -220,14 +246,89 @@ public class ClientClass {
 
         HBox hBox = new HBox ();
         hBox.setAlignment (Pos.CENTER_LEFT);
-        hBox.setSpacing (5);
+        hBox.setSpacing (20);
         hBox.getChildren ().addAll (labelID, textFieldID,
                 labelName,textFieldName,
                 labelBirthDay , textFieldBirthDay,
                 labelTel, textFieldTel);
+//        hBox.getChildren ().addAll (textFieldID, textFieldName, textFieldBirthDay, textFieldTel);
 
         return hBox;
     }
 
+
+    public void getRegTelegramInfo(){
+
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+
+            statement = ServerMySQL.getConnection ().prepareStatement("SELECT * FROM telegram WHERE id_client = ? and status = ? and deleteCheck = ?;");
+
+            statement.setInt (1, this.getId());
+            statement.setString (2, "client");
+            statement.setBoolean (3, false);
+
+            rs = statement.executeQuery();
+
+            if (rs.next()){
+                String cod = rs.getString ("codReg");
+
+                if (cod.length() > 2){
+                    this.setCodRegTelegram(cod);
+                }
+                this.setTelegramReg(true);
+            } else{
+                this.setTelegramReg(false);
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ServerMySQL.statementClose(statement);
+            ServerMySQL.resultSetClose(rs);
+        }
+
+    }
+
+
+    public boolean checkTrainer(){
+
+        boolean check = false;
+
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+
+            statement = ServerMySQL.getConnection ().prepareStatement(
+                    "SELECT * FROM trainers Where idClientThisTrainer = ?;"
+            );
+
+            statement.setInt(1,this.getId());
+            rs = statement.executeQuery();
+
+
+            if (rs.next()) {
+                check = true;
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ServerMySQL.statementClose(statement);
+            ServerMySQL.resultSetClose(rs);
+        }
+
+        return check;
+    }
+
+
+    public List<ActionService> getListActionService(){
+        return new ActionService().getListActionService(this.id, false, true);
+    }
 
 }

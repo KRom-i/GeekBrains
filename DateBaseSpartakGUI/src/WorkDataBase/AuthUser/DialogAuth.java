@@ -2,7 +2,9 @@ package WorkDataBase.AuthUser;
 
 import Cash.TypePaymentArray;
 import Format.DateTime;
+import GUIMain.CustomStage.PanoramaStage;
 import GUIMain.CustomStage.SystemErrorStage;
+import GUIMain.Styles.CssUrl;
 import Logger.LOG;
 import MySQLDB.ServerMySQL;
 import Services.Service;
@@ -47,19 +49,19 @@ public class DialogAuth {
     private ExecutorService service;
     private ContextMenu contextMenu;
     private CheckBox checkBoxSavePass;
+    private PanoramaStage panoramaStage;
 
     public DialogAuth(Node node, TextField nameUser, TextField dateStart) {
 
 
         if (!authUser()){
 
-
             this.service = Executors.newFixedThreadPool (1);
             this.nameUser = nameUser;
             this.dateStart = dateStart;
             this.mainStage = (Stage) node.getScene().getWindow();
 
-            mainStage.setOpacity (0.8);
+
             StackPane stackPane = new StackPane();
 
             contextMenu = new ContextMenu ();
@@ -72,7 +74,7 @@ public class DialogAuth {
             newWindow.setTitle("Авторизация пользователя");
 
             Scene scene = new Scene(stackPane);
-
+            scene.getStylesheets().add(new CssUrl().get ());
 //        scene.setOnMouseClicked(new EventHandler<MouseEvent> () {
 //            @Override
 //            public void handle (MouseEvent event) {
@@ -109,6 +111,7 @@ public class DialogAuth {
             b1.setOnAction (new EventHandler<ActionEvent> () {
                 @Override
                 public void handle(ActionEvent event) {
+                    panoramaStage.close();
                     newWindow.close();
                     mainStage.close ();
                     System.exit (0);
@@ -154,6 +157,8 @@ public class DialogAuth {
             vBox.getChildren ().addAll (label, loginField, passwordField, hBoxSavePass, b2, b1);
 
             stackPane.getChildren ().add (vBox);
+            vBox.getStyleClass().add("my-dox-class-false");
+            stackPane.getStyleClass().add("my-dox-class-false");
 
 //            String css = getClass().getResource("Styles/styleMy.css").toExternalForm();
 //            stackPane.getStylesheets().add("file:/C:/Users/%d0%a0%d0%be%d0%bc%d0%b0%d0%bd/Documents/REPO_My/DateBaseSpartakGUI/out/production/DataBaseSpartakGUI/GUIMain/Styles/style.css");
@@ -174,8 +179,13 @@ public class DialogAuth {
 //        newWindow.setOpacity(0.7);
 //        newWindow.setX(getXbottLeftStage(mainStage, scene) - 20);
 //        newWindow.setY(getYbottLeftStage(mainStage, scene) - 20);
-            newWindow.show();
 
+            panoramaStage = new PanoramaStage(passwordField);
+            panoramaStage.show();
+            panoramaStage.setAlwaysOnTop(false);
+            newWindow.show();
+            mainStage.setOpacity (0.6);
+            newWindow.setOpacity (0.93);
         } else {
             UserSpartak user = AuthUserDateBase.checkUserAuthStart ();
             LOG.info  (user.toString ());
@@ -191,6 +201,7 @@ public class DialogAuth {
     private void  checkAuth(){
         UserSpartak user;
         if ((user =  AuthUserDateBase.newUserAuth (loginField.getText (), passwordField.getText ().hashCode ())) != null){
+            panoramaStage.close();
             LOG.info  (user.toString ());
             ActionUser.setUser (user);
             AuthUserDateBase.editUserAuth (user.getLogin (), true);
@@ -203,6 +214,7 @@ public class DialogAuth {
             }
 
             newWindow.close();
+
             mainStage.setOpacity (1);
             nameUser.setText (user.getName ());
             DateTime d = new DateTime ();
@@ -218,7 +230,7 @@ public class DialogAuth {
                         Thread.sleep (150);
                     } catch (InterruptedException e) {
                         e.printStackTrace ();
-new SystemErrorStage (e);
+                        new SystemErrorStage (e);
                     }
                     loginField.setStyle("-fx-text-fill: black");
                     passwordField.setStyle("-fx-text-fill: black");

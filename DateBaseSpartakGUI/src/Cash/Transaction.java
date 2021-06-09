@@ -100,6 +100,34 @@ public class Transaction {
 
     }
 
+    public Transaction(int idTransaction, ClientClass client, UserSpartak user, int idTypePayment, double value){
+
+        DateTime dateTime = new DateTime();
+        dateTransaction = dateTime.currentDate();
+        timeTransaction = dateTime.currentTime();
+
+        this.idTransaction = idTransaction;
+        this.nameTransaction = new TransactionArray().getName(idTransaction);
+
+        this.idClient = client.getId();
+        this.nameClient = client.toStringIteam();
+
+        this.idUser = user.getId();
+        this.nameUser = user.getName();
+
+        this.idTypePayment = idTypePayment;
+        this.nameTypePayment = new TypePaymentArray().getName(idTypePayment);
+
+        if (value > 0){
+            this.sumCashConsumption = value;
+            this.deleteTran = false;
+        } else {
+            this.sumCashReceipt = value;
+            this.deleteTran = true;
+        }
+
+    }
+
 //    Пустой конструктор
     public Transaction(){
 
@@ -208,7 +236,6 @@ public class Transaction {
     public void setNameTypePayment(String nameTypePayment) {
         this.nameTypePayment = nameTypePayment;
     }
-
 
 
     public double getSumCashReceipt() {

@@ -3,3 +3,13 @@ LOCAL=127.0.0.1
 PORT=3306
 USER_LOG=root
 PASS=limit2301
+
+::TelegramBot::
+BOT_USERNAME=FC_Spartacus_bot
+BOT_TOKEN=1705739217:AAFCTm3Qa_iadfFekhB5DnTK-j_aq-aEn2Q
+
+
+1705739217:AAFCTm3Qa_iadfFekhB5DnTK-j_aq-aEn2Q=limit2301=add=admin
+1705739217:AAFCTm3Qa_iadfFekhB5DnTK-j_aq-aEn2Q=limit2301=add=developer
+1705739217:AAFCTm3Qa_iadfFekhB5DnTK-j_aq-aEn2Q=limit2301=delete
+
